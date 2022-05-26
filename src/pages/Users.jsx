@@ -1,6 +1,6 @@
 import Users from "../components/Users"
 
-const UsersPage = ()=>{
+const UsersPage = (props)=>{
     return <Users />
 }
 

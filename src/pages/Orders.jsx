@@ -1,6 +1,6 @@
 import Orders from "../components/Orders"
 
-const OrdersPage = ()=>{
+const OrdersPage = (props)=>{
     return <Orders />
 }
 

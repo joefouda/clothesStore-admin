@@ -1,32 +1,28 @@
+import axios from 'axios'
 import StickyHeadTable from '../shared/MainTable'
+import { useEffect, useState } from 'react'
 
 const Orders = ()=>{
+    const [orders,setOrders] = useState([])
+    const [loaded, setloaded] = useState(false)
     const info = {
         header:'Orders',
         dataFor:'Order',
-        data: [
-            {
-                id:1,
-                name: 'ahmed',
-                items:'p1,p2',
-                quantity: '5',
-                paymentMethod:'COD',
-                state:'delivered',
-                actions: 'delete'
-            },
-            {
-                id:2,
-                name: 'ahmed',
-                items:'p1,p2',
-                quantity: '5',
-                paymentMethod:'COD',
-                state:'delivered',
-                actions: 'delete'
-            }
-        ],
-        tableHeaders:['Name','Items','Quantity','Payment Method','State','Actions']
+        tableHeaders:['Items','Quantity','Payment Method', 'User', 'Shipping Address','Total Price','State']
     }
-    return <StickyHeadTable info={info}/>
+
+    useEffect(() => {
+        setloaded(true)
+        axios.get('http://localhost:3000/api/v1/order', {
+            headers: {
+                'Authorization': localStorage.getItem('token')
+            }
+        }).then((res) => {
+            setOrders(() => [...res.data.orders])
+            setloaded(false)
+        })
+    }, [])
+    return <StickyHeadTable info={info} data={orders} loaded={loaded}/>
 }
 
 export default Orders

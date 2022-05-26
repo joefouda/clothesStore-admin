@@ -1,6 +1,6 @@
 import Login from '../components/Login'
 
-const LoginPage = ()=>{
+const LoginPage = (props)=>{
     return <Login />
 }
 

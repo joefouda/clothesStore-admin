@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -23,12 +23,32 @@ import UsersPage from '../pages/Users'
 import ProductsPage from '../pages/Products'
 import CategoriesPage from '../pages/Categories'
 import OrdersPage from '../pages/Orders'
+import SubCategoriesPage from '../pages/SubCategories'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Button from '@material-ui/core/Button';
 import Authentication from '../auth/authentication';
 import { useNavigate } from 'react-router-dom';
+import SubCategoryForm from '../forms/SubCategoryForm'
+import axios from 'axios';
+import Chip from '@material-ui/core/Chip';
+import { styled } from '@material-ui/core/styles';
+import Tooltip from '@material-ui/core/Tooltip';
+import tooltipClasses from '@material-ui/core/Tooltip';
+import {NotificationContext} from '../App'
+
 
 const drawerWidth = 240;
+
+const BootstrapTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.common.black,
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.common.black,
+  },
+}));
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    backgroundColor:'#4f6bf7'
+    backgroundColor: '#4f6bf7'
   },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
@@ -63,12 +83,9 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
   },
   drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
   },
   content: {
     flexGrow: 1,
@@ -86,8 +103,8 @@ const useStyles = makeStyles((theme) => ({
     }),
     marginLeft: 0,
   },
-  button:{
-    fontSize:'1.3em'
+  button: {
+    fontSize: '1.3em'
   }
 }));
 
@@ -97,6 +114,51 @@ export default function PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [page, setPage] = React.useState(1);
+  const [subCategories, setSubCategories] = useState([])
+  const [categoryId, setCategoryId] = useState([])
+  const {handleNotification} = useContext(NotificationContext);
+
+  const handleSubCategoryEdit = (subData, subCategoryId) => {
+    console.log(categoryId)
+    axios.put(`http://localhost:3000/api/v1/subCategory/update/${subCategoryId}`, subData, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    }).then(res => {
+      axios.get(`http://localhost:3000/api/v1/category/${subData.category}`, {
+        headers: {
+          'Authorization': localStorage.getItem('token')
+        }
+      }).then(res => {
+        console.log(res)
+        setData(res.data.category.subCategories)
+        handleNotification('success', "Sub Category Updated Successfully")
+      })
+    }).catch(error => {
+      console.log(error)
+    })
+  }
+  const setData = (subData) => {
+    const data = subData.map(ele => {
+      return {
+        ...ele,
+        specs: ele.specs.map((spec, index) => (
+          <BootstrapTooltip key={index} title={spec.options.map((ele, index) => index === spec.options.length - 1 ? ele : `${ele} - `)}>
+            <Chip
+              color='primary'
+              label={spec.name}
+            />
+          </BootstrapTooltip>
+        )),
+        actions: <SubCategoryForm data={ele} categoryId={ele.category} mode={'Edit'} handleEdit={handleSubCategoryEdit} />,
+      }
+    })
+    setSubCategories(() => [...data])
+  }
+
+  const handleCategoryChange = (catId) => {
+    setCategoryId(catId)
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -110,7 +172,7 @@ export default function PersistentDrawerLeft() {
     setPage(value)
   }
 
-  const handleLogOut = ()=>{
+  const handleLogOut = () => {
     Authentication.logOut()
     navigate('/login')
   }
@@ -186,7 +248,7 @@ export default function PersistentDrawerLeft() {
         })}
       >
         <div className={classes.drawerHeader} />
-        {page === 1 ? <UsersPage /> : page === 2 ? <ProductsPage /> : page === 3 ? <CategoriesPage /> : page === 4 ? <OrdersPage /> : ''}
+        {page === 1 ? <UsersPage /> : page === 2 ? <ProductsPage /> : page === 3 ? <CategoriesPage changePage={handleClick} changeSubCategories={setData} setCategoryId={handleCategoryChange} /> : page === 4 ? <OrdersPage /> : page === 5 ? <SubCategoriesPage subCategories={subCategories} categoryId={categoryId} /> : ''}
       </main>
     </div>
   );

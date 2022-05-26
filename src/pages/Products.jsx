@@ -1,6 +1,6 @@
 import Products from "../components/Products"
 
-const ProductsPage = ()=>{
+const ProductsPage = (props)=>{
     return <Products />
 }
 

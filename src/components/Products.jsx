@@ -1,30 +1,60 @@
 import StickyHeadTable from '../shared/MainTable'
+import { useState, useEffect, useCallback } from 'react'
+import ProductForm from '../forms/ProductForm'
+import axios from 'axios'
+import Chip from '@material-ui/core/Chip';
 
-const Products = ()=>{
-    const info = {
-        header:'Products',
-        dataFor:'Product',
-        data: [
-            {
-                id:1,
-                photo: 'avatar',
-                name: 'ahmed',
-                price: '20',
-                stock: '3',
-                actions: 'delete'
-            },
-            {
-                id:2,
-                photo: 'avatar',
-                name: 'ahmed',
-                price: '20',
-                stock: '3',
-                actions: 'delete'
+const Products = () => {
+    const [products, setProducts] = useState([])
+    const [loaded, setloaded] = useState(false)
+
+    const handleEdit = useCallback((data) => {
+        const newData = data.map(ele => {
+            return {
+                ...ele,
+                specs: ele.specs.map((spec, index)=><Chip key={index} color="primary" label={`${spec.name}: ${spec.value}`} />),
+                actions: <ProductForm mode='Edit' handleEdit={handleEdit} data={ele} />,
             }
-        ],
-        tableHeaders:['Photo','Name','Price','Stock','Actions']
+        })
+        setProducts(() => [...newData])
+    }, [])
+
+    const handleAdd = (data) => {
+        const newData = data.map(ele => {
+            return {
+                ...ele,
+                specs: ele.specs.map((spec, index)=><Chip key={index} color="primary" label={`${spec.name}: ${spec.value}`} />),
+                actions: <ProductForm mode='Edit' handleEdit={handleEdit} data={ele} />,
+            }
+        })
+        setProducts(() => [...newData])
     }
-    return <StickyHeadTable info={info}/>
+
+    const info = {
+        header: 'Products',
+        dataFor: 'Product',
+        tableHeaders: ['Photo', 'Name', 'Stock', 'Price', 'Specs', 'Actions']
+    }
+
+    useEffect(() => {
+        setloaded(true)
+        axios.get('http://localhost:3000/api/v1/product', {
+            headers: {
+                'Authorization': localStorage.getItem('token')
+            }
+        }).then((res) => {
+            const data = res.data.products.map(ele => {
+                return {
+                    ...ele,
+                    specs: ele.specs.map((spec,index)=><Chip color="primary" key={index} label={`${spec.name}: ${spec.value}`} />),
+                    actions: <ProductForm mode='Edit' handleEdit={handleEdit} data={ele} />,
+                }
+            })
+            setProducts(() => [...data])
+            setloaded(false)
+        })
+    }, [handleEdit])
+    return <StickyHeadTable info={info} data={products} handleAdd={handleAdd} loaded={loaded} />
 }
 
 export default Products

@@ -1,6 +1,6 @@
 import Signup from '../components/Signup'
 
-const SignupPage = ()=>{
+const SignupPage = (props)=>{
     return <Signup />
 }
 

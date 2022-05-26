@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 import Button from '@material-ui/core/Button';
-import Alert from '@material-ui/lab/Alert';
 import Authentication from '../auth/authentication';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { NotificationContext } from '../App'
 
 const useStyles = makeStyles((theme) => ({
     errorMessage: {
@@ -66,17 +66,16 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function Login() {
+export default function Login(props) {
     const classes = useStyles();
     const navigate = useNavigate();
-    const [serverErrorMessage, setServerErrorMessage] = useState('')
     const [progress, setProgress] = useState(false)
-    const [unAuthenticated, setUnAuthenticated] = useState(false)
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
     const [errors, setErrors] = useState({ userName: "", password: "" });
     const isInitialMount = useRef(true);
     const isInitialMount2 = useRef(true);
+    const { handleNotification } = useContext(NotificationContext);
 
     useEffect(() => {
         if (isInitialMount.current) {
@@ -109,31 +108,22 @@ export default function Login() {
     const handleSubmit = (event) => {
         event.preventDefault()
         setProgress(true)
-        let data = {userName,password}
+        let data = { userName, password }
         Authentication.logIn(data).then((res) => {
             setProgress(false)
-            if(res.data.status === 422){
-                setUnAuthenticated(true);
-                setServerErrorMessage("Invalid Username or Password")
-                setTimeout(() => {
-                    setUnAuthenticated(false)
-                }, 3000);
-            }else{
+            if (res.data.status === 422) {
+                handleNotification('error', "Invalid Username or Password")
+            } else {
                 localStorage.setItem('token', res.data.token)
                 navigate('/')
             }
         }).catch(error => {
-            setUnAuthenticated(true);
-            setServerErrorMessage("Server Error")
-            setTimeout(() => {
-                setUnAuthenticated(false)
-            }, 3000);
+            handleNotification('error', "Server Error")
         })
     }
 
     return (
         <>
-            {unAuthenticated ? <Alert severity="error" className={classes.errorMessage}>{serverErrorMessage}</Alert> : ''}
             {progress ? <CircularProgress className={classes.progress} /> : <Card variant="outlined" className={classes.card}>
                 <form className={classes.rootForm} onSubmit={handleSubmit} autoComplete="off">
                     <div className={classes.content}>
@@ -154,10 +144,10 @@ export default function Login() {
                     >
                         <div className={classes.buttonContainer}>
                             <Button
-                                disabled={errors.userName||errors.password||!userName||!password?true:false}
+                                disabled={errors.userName || errors.password || !userName || !password ? true : false}
                                 color="primary"
                                 className={classes.button}
-                                startIcon={<ExitToAppIcon style={{ fontSize: '1em' }} />}
+                                startIcon={<LockOpenIcon style={{ fontSize: '1em' }} />}
                                 type="submit"
                             >
                                 Log In

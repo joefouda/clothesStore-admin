@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
-import { useState, useRef } from 'react';
+import React from 'react';
+import { useState, useRef,useContext,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import Button from '@material-ui/core/Button';
-import Alert from '@material-ui/lab/Alert';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from "axios";
+import { NotificationContext } from '../App'
 
 const useStyles = makeStyles((theme) => ({
     errorMessage: {
@@ -70,13 +70,12 @@ export default function Signup(props) {
     const navigate = useNavigate();
     const classes = useStyles();
     const [progress, setProgress] = useState(false)
-    const [unAuthenticated, setUnAuthenticated] = useState(false)
-    const [serverErrorMessage, setServerErrorMessage] = useState('')
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
     const [errors, setErrors] = useState({ userName: "", password: "" });
     const isInitialMount = useRef(true);
     const isInitialMount2 = useRef(true);
+    const { handleNotification } = useContext(NotificationContext);
 
     useEffect(() => {
         if (isInitialMount.current) {
@@ -112,28 +111,18 @@ export default function Signup(props) {
         let data = { userName, password }
         axios.post('http://localhost:3000/api/v1/admin/signup', data).then((response) => {
             setProgress(false)
-            console.log(response)
             if (!response.data.message.includes('duplicate key error')) {
                 navigate('/login')
             } else {
-                setServerErrorMessage('UserName Exists')
-                setUnAuthenticated(true)
-                setTimeout(() => {
-                    setUnAuthenticated(false)
-                }, 3000)
+                handleNotification('error', 'UserName Exists')
             }
-        }).catch(error=>{
-            setServerErrorMessage('Server Error')
-            setUnAuthenticated(true)
-            setTimeout(() => {
-                setUnAuthenticated(false)
-            }, 3000)
+        }).catch(error => {
+                handleNotification('error', 'Server Error')
         })
     }
 
     return (
         <>
-            {unAuthenticated ? <Alert severity="error" className={classes.errorMessage}>{serverErrorMessage}</Alert> : ''}
             {progress ? <CircularProgress className={classes.progress} /> : <Card variant="outlined" className={classes.card}>
                 <form className={classes.rootForm} onSubmit={handleSubmit} autoComplete="off">
                     <div
