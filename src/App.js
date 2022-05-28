@@ -36,7 +36,7 @@ function App() {
 
   return (
     <div style={{ backgroundImage: `url(${photo})`, backgroundSize: "cover", height: '100vh' }}>
-      <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={open} autoHideDuration={3000} onClose={handleClose}>
+      <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={open} autoHideDuration={5000} onClose={handleClose}>
         <Alert onClose={handleClose} severity={state}>
           {message}
         </Alert>

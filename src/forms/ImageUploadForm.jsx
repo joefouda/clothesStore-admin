@@ -1,4 +1,3 @@
-import Avatar from '@material-ui/core/Avatar';
 import { useState, createRef, useEffect } from "react";
 import axios from 'axios';
 import { Input } from "@material-ui/core";
