@@ -77,6 +77,8 @@ export default function ProductForm(props) {
     const [categories, setCategories] = useState([])
     const [subCategory, setSubCategory] = useState('')
     const [subCategories, setSubCategories] = useState([])
+    const [model, setModel] = useState('')
+    const [models, setModels] = useState([])
     const [specOption, setSpecOption] = useState([])
     const [specs, setSpecs] = useState([])
     const [finalSpecs, setFinalSpecs] = useState([])
@@ -87,6 +89,7 @@ export default function ProductForm(props) {
 
     const [categoryId, setCategoryId] = useState('')
     const [subCategoryId, setSubCategoryId] = useState('')
+
 
 
     const handleCategoryChange = (event) => {
@@ -101,13 +104,21 @@ export default function ProductForm(props) {
 
     const handleSubCategoryChange = (event) => {
         setSubCategory(event.target.value);
-
         const subCategory = subCategories.find(ele => {
             return ele.name === event.target.value
         })
         setSubCategoryId(subCategory._id)
-        setSpecs(() => [...subCategory.specs])
+        axios.get(`http://localhost:3000/api/v1/subcategory/${subCategory._id}`).then((res) => {
+            console.log(res.data.subCategory.specs)
+            setModels(() => [...res.data.subCategory.models])
+            setSpecs(() => [...subCategory.specs])
+        })
+
     };
+
+    const handleModelChange = (event)=>{
+        setModel(event.target.value);
+    }
 
     const handleOptionChange = (event, spec, index) => {
         const newOptions = [...specOption]
@@ -136,6 +147,8 @@ export default function ProductForm(props) {
         setCategory('')
         setSubCategory('')
         setSubCategories([])
+        setModel('')
+        setModels([])
         setSpecs([])
         setFinalSpecs([])
         setSpecOption([])
@@ -143,7 +156,7 @@ export default function ProductForm(props) {
 
     const handleSubmit = () => {
         if (props.mode === 'Add') {
-            let addData = { photo:imageSource, name, stock, price, category: categoryId, subCategory: subCategoryId, specs: finalSpecs }
+            let addData = { photo:imageSource, name, stock, price, category: categoryId, subCategory: subCategoryId, specs: finalSpecs, model:model === 'new'?'':model }
             axios.post('http://localhost:3000/api/v1/product/add', addData, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -186,6 +199,8 @@ export default function ProductForm(props) {
         setCategory('')
         setSubCategory('')
         setSubCategories([])
+        setModel('')
+        setModels([])
         setSpecs([])
         setFinalSpecs([])
         setSpecOption([])
@@ -264,6 +279,20 @@ export default function ProductForm(props) {
                             onChange={handleSubCategoryChange}
                         >
                             {subCategories.map((subCategory) => (<MenuItem key={subCategory._id} value={subCategory.name}>{subCategory.name}</MenuItem>))}
+                        </Select>
+                    </MyFormControl> : ''}
+
+                    {models.length !== 0 && props.mode === 'Add' ? <MyFormControl variant="outlined" size="small">
+                        <InputLabel id="demo-select-small">Model</InputLabel>
+                        <Select
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            value={model || ''}
+                            label="Model"
+                            onChange={handleModelChange}
+                        >
+                            {models.map((model) => (<MenuItem key={model} value={model}>{model}</MenuItem>))}
+                            <MenuItem value='new'>New Model</MenuItem>
                         </Select>
                     </MyFormControl> : ''}
 

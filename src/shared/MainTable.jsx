@@ -22,7 +22,7 @@ const useStyles = makeStyles({
         width: '100%',
     },
     container: {
-        maxHeight: 440,
+        maxHeight: '90vh',
     },
     progress: {
         position: 'absolute',
@@ -67,7 +67,7 @@ export default function StickyHeadTable(props) {
             <Typography variant="h4" style={{ marginBottom: 5, color: '#fff' }}>
                 {props.info.header}
             </Typography>
-            {loadData ? <CircularProgress className={classes.progress} /> : <Paper className={classes.root}>
+            {loadData ? <CircularProgress className={classes.progress} /> :<Paper className={classes.root}>
                 <TableContainer className={classes.container}>
                     <Table id="contain" stickyHeader aria-label="sticky table">
                         <TableHead>

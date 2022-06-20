@@ -196,7 +196,7 @@ export default function PersistentDrawerLeft() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" style={{ flexGrow: 1 }}>
-            clothes admin dashboard
+            Butron admin dashboard
           </Typography>
         </Toolbar>
       </AppBar>

@@ -80,7 +80,7 @@ export default function PersistentDrawerLeft() {
       >
         <Toolbar style={{display:'flex'}}>
           <Typography variant="h6" component="div" style={{ flexGrow: 1 }}>
-            clothes admin dashboard
+            Butron admin dashboard
           </Typography>
           <Button color="inherit" onClick={() => navigate('/login')}>Log In</Button>
           <Button color="inherit" onClick={() => navigate('/signup')}>Sign Up</Button>
