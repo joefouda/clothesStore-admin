@@ -119,7 +119,6 @@ export default function PersistentDrawerLeft() {
   const {handleNotification} = useContext(NotificationContext);
 
   const handleSubCategoryEdit = (subData, subCategoryId) => {
-    console.log(categoryId)
     axios.put(`http://localhost:3000/api/v1/subCategory/update/${subCategoryId}`, subData, {
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -130,7 +129,6 @@ export default function PersistentDrawerLeft() {
           'Authorization': localStorage.getItem('token')
         }
       }).then(res => {
-        console.log(res)
         setData(res.data.category.subCategories)
         handleNotification('success', "Sub Category Updated Successfully")
       })
@@ -153,7 +151,8 @@ export default function PersistentDrawerLeft() {
         actions: <SubCategoryForm data={ele} categoryId={ele.category} mode={'Edit'} handleEdit={handleSubCategoryEdit} />,
       }
     })
-    setSubCategories(() => [...data])
+    console.log(data)
+    setSubCategories(data)
   }
 
   const handleCategoryChange = (catId) => {
@@ -248,7 +247,7 @@ export default function PersistentDrawerLeft() {
         })}
       >
         <div className={classes.drawerHeader} />
-        {page === 1 ? <UsersPage /> : page === 2 ? <ProductsPage /> : page === 3 ? <CategoriesPage changePage={handleClick} changeSubCategories={setData} setCategoryId={handleCategoryChange} /> : page === 4 ? <OrdersPage /> : page === 5 ? <SubCategoriesPage subCategories={subCategories} categoryId={categoryId} /> : ''}
+        {page === 1 ? <UsersPage /> : page === 2 ? <ProductsPage /> : page === 3 ? <CategoriesPage changePage={handleClick} changeSubCategories={setData} setCategoryId={handleCategoryChange} /> : page === 4 ? <OrdersPage /> : page === 5 ? <SubCategoriesPage subCategories={subCategories} setData={setData} handleSubCategoryEdit={handleSubCategoryEdit}  categoryId={categoryId} /> : ''}
       </main>
     </div>
   );
