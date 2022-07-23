@@ -14,7 +14,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import axios from 'axios'
 import Chip from '@material-ui/core/Chip';
-
+import useToggle from '../customHooks/useToggle';
 
 const styles = (theme) => ({
     root: {
@@ -57,16 +57,16 @@ const DialogActions = withStyles((theme) => ({
 }))(MuiDialogActions);
 
 export default function OrderStateForm(props) {
-    const [open, setOpen] = React.useState(false);
+    const [open, toggleOpen] = useToggle(false);
     const [state, setState] = useState(props.state)
     const { handleNotification } = useContext(NotificationContext);
 
     const handleClickOpen = () => {
         setState(props.state)
-        setOpen(true);
+        toggleOpen();
     };
     const handleClose = () => {
-        setOpen(false);
+        toggleOpen();
         setState('');
     };
 
@@ -86,7 +86,7 @@ export default function OrderStateForm(props) {
                 }
             }).then((res) => {
                 props.setData(res.data.orders)
-                setOpen(false);
+                toggleOpen();
                 setState('');
                 handleNotification('success', response.data)
             })

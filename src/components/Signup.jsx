@@ -10,6 +10,7 @@ import Divider from '@material-ui/core/Divider';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from "axios";
 import { NotificationContext } from '../App'
+import useInput from '../customHooks/useInput';
 
 const useStyles = makeStyles((theme) => ({
     errorMessage: {
@@ -70,8 +71,8 @@ export default function Signup(props) {
     const navigate = useNavigate();
     const classes = useStyles();
     const [progress, setProgress] = useState(false)
-    const [userName, setUserName] = useState("")
-    const [password, setPassword] = useState("")
+    const [userName, updateUserName] = useInput("")
+    const [password, updatePassword] = useInput("")
     const [errors, setErrors] = useState({ userName: "", password: "" });
     const isInitialMount = useRef(true);
     const isInitialMount2 = useRef(true);
@@ -143,14 +144,10 @@ export default function Signup(props) {
                     <Divider orientation="vertical" flexItem />
                     <div className={classes.content}>
                         <div>
-                            <TextField variant="outlined" id="userName" error={errors.userName ? true : false} helperText={errors.userName} name="userName" onKeyUp={e => {
-                                setUserName(e.target.value)
-                            }} label="User Name" placeholder='User Name' />
+                            <TextField variant="outlined" id="userName" error={errors.userName ? true : false} helperText={errors.userName} name="userName" onKeyUp={updateUserName} label="User Name" placeholder='User Name' />
                         </div>
                         <div>
-                            <TextField variant="outlined" id="password" error={errors.password ? true : false} helperText={errors.password} name="password" onKeyUp={e => {
-                                setPassword(e.target.value)
-                            }} type="password" label="Password" placeholder='Password' />
+                            <TextField variant="outlined" id="password" error={errors.password ? true : false} helperText={errors.password} name="password" onKeyUp={updatePassword} type="password" label="Password" placeholder='Password' />
                         </div>
                     </div>
 

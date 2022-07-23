@@ -13,6 +13,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
 import Paper from '@material-ui/core/Paper';
+import useToggle from '../customHooks/useToggle'
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -58,11 +59,11 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function SpecForm(props) {
-    const [open, setOpen] = useState(false);
+    const [open, toggleOpen] = useToggle(false);
     const [name, setName] = useState(props.spec?.name)
     const [option, setOption] = useState('')
     const [options, setOptions] = useState(props.spec?.options || [])
-    const [touchedName, setTouchedName] = useState(false)
+    const [touchedName, toggleTouchedName] = useToggle(false)
 
 
     const handleDelete = (optionToDelete) => () => {
@@ -70,13 +71,13 @@ export default function SpecForm(props) {
     };
 
     const handleClickOpen = () => {
-        setOpen(true);
+        toggleOpen(true);
         setName(props.spec?.name)
         setOptions(props.spec?.options || [])
     };
     const handleClose = () => {
-        setOpen(false);
-        setTouchedName(false)
+        toggleOpen(false);
+        toggleTouchedName(false)
         setName('')
         setOptions([])
         setOption('')
@@ -94,11 +95,11 @@ export default function SpecForm(props) {
         }else{
             props.handleEditSpec(data,props.index)
         }
-        setTouchedName(false)
+        toggleTouchedName(false)
         setName('')
         setOptions([])
         setOption('')
-        setOpen(false);
+        toggleOpen(false);
     }
 
     return (
@@ -122,7 +123,7 @@ export default function SpecForm(props) {
                 <DialogContent dividers>
                     <MyTextField required helperText={!name && touchedName ? 'required' : ''} error={!name && touchedName ? true : false} variant="outlined" id="name" name="name" onChange={e => {
                         setName(e.target.value)
-                        setTouchedName(true)
+                        toggleTouchedName(true)
                     }} label="Name" placeholder='Name' value={name} />
 
                     <MyTextField variant="outlined" id="option" name="option" onChange={e => {

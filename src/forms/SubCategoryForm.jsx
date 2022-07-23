@@ -22,6 +22,7 @@ import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
 import SpecForm from './SpecForm'
 import ImageUploadForm from "./ImageUploadForm";
+import useToggle from '../customHooks/useToggle';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -66,21 +67,21 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function SubCategoryForm(props) {
-    const [open, setOpen] = useState(false);
+    const [open, toggleOpen] = useToggle(false);
     const [imageSource, setImageSource] = useState(props.data?.photo)
     const [name, setName] = useState(props.data?.name)
     const [specs, setSpecs] = useState(props.data?.specs || [])
-    const [touchedName, setTouchedName] = useState(false)
+    const [touchedName, toggleTouchedName] = useToggle(false)
 
     const handleClickOpen = () => {
-        setOpen(true);
+        toggleOpen(true);
         setName(props.data?.name)
         setImageSource(props.data?.photo)
         setSpecs(props.data?.specs || [])
     };
     const handleClose = () => {
-        setOpen(false);
-        setTouchedName(false)
+        toggleOpen(false);
+        toggleTouchedName(false)
         setName('')
         setImageSource('')
         setSpecs([])
@@ -110,11 +111,11 @@ export default function SubCategoryForm(props) {
             props.handleEdit(data, props.data?._id)
         }
 
-        setTouchedName(false)
+        toggleTouchedName(false)
         setName('')
         setImageSource('')
         setSpecs([])
-        setOpen(false);
+        toggleOpen(false);
     }
     const handleImageChange = (childData) => {
         setImageSource(childData)
@@ -142,7 +143,7 @@ export default function SubCategoryForm(props) {
 
                     <MyTextField required helperText={!name && touchedName ? 'required' : ''} error={!name && touchedName ? true : false} variant="outlined" id="name" name="name" onChange={e => {
                         setName(e.target.value)
-                        setTouchedName(true)
+                        toggleTouchedName(true)
                     }} label="Name" placeholder='Name' defaultValue={name} />
                     {specs.length !== 0 ? <TableContainer component={Paper}>
                         <Table aria-label="caption table">

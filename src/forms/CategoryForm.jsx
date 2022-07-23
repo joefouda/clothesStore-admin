@@ -14,6 +14,7 @@ import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
 import {NotificationContext} from '../App'
 import ImageUploadForm from "./ImageUploadForm";
+import useToggle from '../customHooks/useToggle';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -58,20 +59,20 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function CategoryForm(props) {
-    const [open, setOpen] = useState(false);
+    const [open, toggleOpen] = useToggle(false);
     const [name, setName] = useState(props.data?.name)
-    const [touchedName, setTouchedName] = useState(false)
+    const [touchedName, toggleTouchedName] = useToggle(false)
     const {handleNotification} = useContext(NotificationContext);
     const [imageSource,setImageSource] = useState(props.data?.photo)
 
     const handleClickOpen = () => {
-        setOpen(true);
+        toggleOpen();
         setName(props.data?.name)
         setImageSource(props.data?.photo)
     };
     const handleClose = () => {
-        setOpen(false);
-        setTouchedName(false)
+        toggleOpen();
+        toggleTouchedName(false)
         setName('')
         setImageSource('')
     };
@@ -111,10 +112,10 @@ export default function CategoryForm(props) {
             })
         }
 
-        setTouchedName(false)
+        toggleTouchedName(false)
         setName('')
         setImageSource('')
-        setOpen(false);
+        toggleOpen();
     }
     const handleImageChange = (childData)=>{
         setImageSource(childData)
@@ -143,7 +144,7 @@ export default function CategoryForm(props) {
 
                     <MyTextField required helperText={!name && touchedName ? 'required' : ''} error={!name && touchedName ? true : false} variant="outlined" id="name" name="name" onChange={e => {
                         setName(e.target.value)
-                        setTouchedName(true)
+                        toggleTouchedName(true)
                     }} label="Name" placeholder='Name' defaultValue={name} />
                 </DialogContent>
                 <DialogActions>

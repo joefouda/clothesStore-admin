@@ -11,6 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import TextField from '@material-ui/core/TextField';
+import TextArea from 'antd/lib/input/TextArea';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -18,6 +19,7 @@ import Select from '@material-ui/core/Select';
 import axios from 'axios';
 import {NotificationContext} from '../App'
 import ImageUploadForm from "./ImageUploadForm";
+import useToggle from '../customHooks/useToggle';
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -68,23 +70,25 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function ProductForm(props) {
-    const [open, setOpen] = useState(false);
+    const [open, toggleOpen] = useToggle(false);
     const [imageSource,setImageSource] = useState(props.data?.photo)
     const [name, setName] = useState(props.data?.name)
+    const [description, setDescription] = useState(props.data?.description)
     const [stock, setStock] = useState(props.data?.stock)
     const [price, setPrice] = useState(props.data?.price)
     const [category, setCategory] = useState('')
     const [categories, setCategories] = useState([])
     const [subCategory, setSubCategory] = useState('')
     const [subCategories, setSubCategories] = useState([])
-    const [model, setModel] = useState('')
+    const [model, setModel] = useState('new')
     const [models, setModels] = useState([])
     const [specOption, setSpecOption] = useState([])
     const [specs, setSpecs] = useState([])
     const [finalSpecs, setFinalSpecs] = useState([])
-    const [touchedName, setTouchedName] = useState(false)
-    const [touchedStock, setTouchedStock] = useState(false)
-    const [touchedPrice, setTouchedPrice] = useState(false)
+    const [touchedName, toggleTouchedName] = useToggle(false)
+    const [touchedDescription, toggleTouchedDescription] = useToggle(false)
+    const [touchedStock, toggleTouchedStock] = useToggle(false)
+    const [touchedPrice, toggleTouchedPrice] = useToggle(false)
     const {handleNotification} = useContext(NotificationContext);
 
     const [categoryId, setCategoryId] = useState('')
@@ -109,7 +113,6 @@ export default function ProductForm(props) {
         })
         setSubCategoryId(subCategory._id)
         axios.get(`http://localhost:3000/api/v1/subcategory/${subCategory._id}`).then((res) => {
-            console.log(res.data.subCategory.specs)
             setModels(() => [...res.data.subCategory.models])
             setSpecs(() => [...subCategory.specs])
         })
@@ -128,19 +131,22 @@ export default function ProductForm(props) {
     }
 
     const handleClickOpen = () => {
-        setOpen(true);
+        toggleOpen(true);
         setName(props.data?.name)
+        setDescription(props.data?.description)
         setImageSource(props.data?.photo)
         setStock(props.data?.stock)
         setPrice(props.data?.price)
         setCategory(props.data?.category)
     };
     const handleClose = () => {
-        setOpen(false);
-        setTouchedName(false)
-        setTouchedStock(false)
-        setTouchedPrice(false)
+        toggleOpen(false);
+        toggleTouchedName(false)
+        toggleTouchedDescription(false)
+        toggleTouchedStock(false)
+        toggleTouchedPrice(false)
         setName('')
+        setDescription('')
         setImageSource('')
         setStock('')
         setPrice('')
@@ -156,7 +162,8 @@ export default function ProductForm(props) {
 
     const handleSubmit = () => {
         if (props.mode === 'Add') {
-            let addData = { photo:imageSource, name, stock, price, category: categoryId, subCategory: subCategoryId, specs: finalSpecs, model:model === 'new'?'':model }
+            let addData = { photo:imageSource, name,description, stock, price, category: categoryId, subCategory: subCategoryId, specs: finalSpecs, model:model }
+            console.log(addData)
             axios.post('http://localhost:3000/api/v1/product/add', addData, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -172,7 +179,7 @@ export default function ProductForm(props) {
                 })
             })
         } else {
-            let editData = { photo:imageSource, name, stock, price   }
+            let editData = { photo:imageSource, name, description, stock, price   }
             axios.put(`http://localhost:3000/api/v1/product/update/${props.data?._id}`, editData, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -189,10 +196,12 @@ export default function ProductForm(props) {
             })
         }
 
-        setTouchedName(false)
-        setTouchedStock(false)
-        setTouchedPrice(false)
+        toggleTouchedName(false)
+        toggleTouchedDescription(false)
+        toggleTouchedStock(false)
+        toggleTouchedPrice(false)
         setName('')
+        setDescription('')
         setImageSource('')
         setStock('')
         setPrice('')
@@ -204,7 +213,7 @@ export default function ProductForm(props) {
         setSpecs([])
         setFinalSpecs([])
         setSpecOption([])
-        setOpen(false);
+        toggleOpen(false);
     }
 
     const handleImageChange = (childData)=>{
@@ -243,18 +252,23 @@ export default function ProductForm(props) {
 
                     <MyTextField required helperText={!name && touchedName ? 'required' : ''} error={!name && touchedName ? true : false} variant="outlined" id="name" name="name" onChange={e => {
                         setName(e.target.value)
-                        setTouchedName(true)
+                        toggleTouchedName(true)
                     }} label="Name" placeholder='Name' defaultValue={name} />
 
                     <MyTextField required helperText={!stock && touchedStock ? 'required' : ''} error={!stock && touchedStock ? true : false} variant="outlined" id="stock" type='number' name="stock" onChange={e => {
                         setStock(e.target.value)
-                        setTouchedStock(true)
+                        toggleTouchedStock(true)
                     }} label="Stock" placeholder='Stock' defaultValue={stock} />
 
                     <MyTextField required helperText={!price && touchedPrice ? 'required' : ''} error={!price && touchedPrice ? true : false} variant="outlined" id="price" type='number' name="price" onChange={e => {
                         setPrice(e.target.value)
-                        setTouchedPrice(true)
+                        toggleTouchedPrice(true)
                     }} label="Price" placeholder='Price' defaultValue={price} />
+
+                    <TextArea status={!description && touchedDescription?'error':''} variant="outlined" id="description" name="description" onChange={e => {
+                        setDescription(e.target.value)
+                        toggleTouchedDescription(true)
+                    }} label="Description" placeholder={!description && touchedDescription?'required':'Description'} defaultValue={description} />
 
                     {props.mode === 'Add' ? <MyFormControl variant="outlined" required size="small">
                         <InputLabel id="demo-select-small">Category</InputLabel>

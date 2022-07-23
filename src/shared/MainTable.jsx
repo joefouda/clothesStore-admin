@@ -22,7 +22,7 @@ const useStyles = makeStyles({
         width: '100%',
     },
     container: {
-        maxHeight: '90vh',
+        maxHeight: '70vh',
     },
     progress: {
         position: 'absolute',
