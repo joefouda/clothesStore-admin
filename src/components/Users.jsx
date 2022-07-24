@@ -63,7 +63,7 @@ const Users = (props) => {
   const info = {
     header: 'Users',
     dataFor: 'User',
-    tableHeaders: ['Photo', 'Name', 'Email', 'Address', 'Is Banned']
+    tableHeaders: ['Name', 'Email', 'Address', 'Is Banned']
   }
   const handleToggle = (event) => {
     axios.put(`http://localhost:3000/api/v1/user/toggleState/${event.target.value}`, {}, {
@@ -88,6 +88,7 @@ const Users = (props) => {
       const data = res.data.users.map(ele => {
         return {
           ...ele,
+          address:ele.address.country,
           isBanned: ele.isBanned ? <IOSSwitch sx={{ m: 1 }} value={ele._id} onChange={handleToggle} defaultChecked /> : <IOSSwitch sx={{ m: 1 }} value={ele._id} onChange={handleToggle} />
         }
       })
