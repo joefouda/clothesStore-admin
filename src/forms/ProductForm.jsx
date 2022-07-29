@@ -127,7 +127,15 @@ export default function ProductForm(props) {
         const newOptions = [...specOption]
         newOptions[index] = event.target.value
         setSpecOption(() => [...newOptions])
-        setFinalSpecs((oldSpecs) => [...oldSpecs, { name: spec, value: event.target.value }])
+        if(finalSpecs.some(ele=>ele.name === spec)){
+            console.log()
+            setFinalSpecs((oldSpecs) => oldSpecs.map(ele=>{
+                if(ele.name === spec) return { name: spec, value: event.target.value }
+                return ele
+            }))
+        }else {
+            setFinalSpecs((oldSpecs) => [...oldSpecs, { name: spec, value: event.target.value }])
+        }
     }
 
     const handleClickOpen = () => {
