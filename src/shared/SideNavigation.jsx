@@ -12,6 +12,8 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import HomeIcon from '@material-ui/icons/Home';
+import FormatAlignJustifyIcon from '@material-ui/icons/FormatAlignJustify';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -19,36 +21,18 @@ import PersonIcon from '@material-ui/icons/Person';
 import CategoryIcon from '@material-ui/icons/Category';
 import FeaturedPlayListOutlinedIcon from '@material-ui/icons/FeaturedPlayListOutlined';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import UsersPage from '../pages/Users'
-import ProductsPage from '../pages/Products'
-import CategoriesPage from '../pages/Categories'
-import OrdersPage from '../pages/Orders'
-import SubCategoriesPage from '../pages/SubCategories'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Button from '@material-ui/core/Button';
 import Authentication from '../auth/authentication';
 import { useNavigate } from 'react-router-dom';
-import SubCategoryForm from '../forms/SubCategoryForm'
-import axios from 'axios';
-import Chip from '@material-ui/core/Chip';
-import { styled } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
-import tooltipClasses from '@material-ui/core/Tooltip';
+
 import {NotificationContext} from '../App'
+import {useLocation} from 'react-router-dom'
 
 
 const drawerWidth = 240;
 
-const BootstrapTooltip = styled(({ className, ...props }) => (
-  <Tooltip {...props} arrow classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.arrow}`]: {
-    color: theme.palette.common.black,
-  },
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.common.black,
-  },
-}));
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -113,51 +97,7 @@ export default function PersistentDrawerLeft() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [page, setPage] = React.useState(1);
-  const [subCategories, setSubCategories] = useState([])
-  const [categoryId, setCategoryId] = useState([])
-  const {handleNotification} = useContext(NotificationContext);
-
-  const handleSubCategoryEdit = (subData, subCategoryId) => {
-    axios.put(`http://localhost:3000/api/v1/subCategory/update/${subCategoryId}`, subData, {
-      headers: {
-        'Authorization': localStorage.getItem('token')
-      }
-    }).then(res => {
-      axios.get(`http://localhost:3000/api/v1/category/${subData.category}`, {
-        headers: {
-          'Authorization': localStorage.getItem('token')
-        }
-      }).then(res => {
-        setData(res.data.category.subCategories)
-        handleNotification('success', "Sub Category Updated Successfully")
-      })
-    }).catch(error => {
-      console.log(error)
-    })
-  }
-  const setData = (subData) => {
-    const data = subData.map(ele => {
-      return {
-        ...ele,
-        specs: ele.specs.map((spec, index) => (
-          <BootstrapTooltip key={index} title={spec.options.map((ele, index) => index === spec.options.length - 1 ? ele : `${ele} - `)}>
-            <Chip
-              color='primary'
-              label={spec.name}
-            />
-          </BootstrapTooltip>
-        )),
-        actions: <SubCategoryForm data={ele} categoryId={ele.category} mode={'Edit'} handleEdit={handleSubCategoryEdit} />,
-      }
-    })
-    console.log(data)
-    setSubCategories(data)
-  }
-
-  const handleCategoryChange = (catId) => {
-    setCategoryId(catId)
-  }
+  const location = useLocation()
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -167,9 +107,9 @@ export default function PersistentDrawerLeft() {
     setOpen(false);
   };
 
-  const handleClick = (value) => {
-    setPage(value)
-  }
+  // const handleClick = (value) => {
+  //   setPage(value)
+  // }
 
   const handleLogOut = () => {
     Authentication.logOut()
@@ -215,21 +155,29 @@ export default function PersistentDrawerLeft() {
         </div>
         <Divider />
         <List>
-          <ListItem button onClick={() => handleClick(1)}>
+          <ListItem button onClick={() => navigate('/')}>
+            <ListItemIcon><HomeIcon /></ListItemIcon>
+            <ListItemText primary={'Home'} />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/users')}>
             <ListItemIcon><PersonIcon /></ListItemIcon>
             <ListItemText primary={'Users'} />
           </ListItem>
-          <ListItem button onClick={() => handleClick(2)}>
+          <ListItem button onClick={() => navigate('/proucts')}>
             <ListItemIcon><FeaturedPlayListOutlinedIcon /></ListItemIcon>
             <ListItemText primary={'Products'} />
           </ListItem>
-          <ListItem button onClick={() => handleClick(3)}>
+          <ListItem button onClick={() => navigate('/categories')}>
             <ListItemIcon><CategoryIcon /></ListItemIcon>
             <ListItemText primary={'Categories'} />
           </ListItem>
-          <ListItem button onClick={() => handleClick(4)}>
+          <ListItem button onClick={() => navigate('/orders')}>
             <ListItemIcon><ShoppingCartIcon /></ListItemIcon>
             <ListItemText primary={'Orders'} />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/othercontrols')}>
+            <ListItemIcon><FormatAlignJustifyIcon /></ListItemIcon>
+            <ListItemText primary={'Other Controls'} />
           </ListItem>
         </List>
         <Divider />
@@ -247,7 +195,7 @@ export default function PersistentDrawerLeft() {
         })}
       >
         <div className={classes.drawerHeader} />
-        {page === 1 ? <UsersPage /> : page === 2 ? <ProductsPage /> : page === 3 ? <CategoriesPage changePage={handleClick} changeSubCategories={setData} setCategoryId={handleCategoryChange} /> : page === 4 ? <OrdersPage /> : page === 5 ? <SubCategoriesPage subCategories={subCategories} setData={setData} handleSubCategoryEdit={handleSubCategoryEdit}  categoryId={categoryId} /> : ''}
+        
       </main>
     </div>
   );

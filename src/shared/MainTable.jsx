@@ -105,7 +105,8 @@ export default function StickyHeadTable(props) {
                 </TableContainer>
                 {actionDisplay ? <TableFooter style={{ display: 'flex' }}>
                     <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {props.info.header === 'Categories' ? <CategoryForm handleAdd={props.handleAdd} mode="Add" /> : props.info.header === 'Sub Categories' ? <SubCategoryForm categoryId={props.categoryId} handleAdd={props.handleAdd} mode="Add" /> : props.info.header === 'Products' ? <ProductForm handleAdd={props.handleAdd} mode="Add" /> : ''}
+                        {props.addFormContent}
+                        {/* {props.info.header === 'Categories' ? <CategoryForm handleAdd={props.handleAdd} mode="Add" /> : props.info.header === 'Sub Categories' ? <SubCategoryForm categoryId={props.categoryId} handleAdd={props.handleAdd} mode="Add" /> : props.info.header === 'Products' ? <ProductForm handleAdd={props.handleAdd} mode="Add" /> : ''} */}
                     </div>
                     <TablePagination
                         rowsPerPageOptions={[10, 25, 100]}

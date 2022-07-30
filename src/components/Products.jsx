@@ -54,7 +54,7 @@ const Products = () => {
             setloaded(false)
         })
     }, [handleEdit])
-    return <StickyHeadTable info={info} data={products} handleAdd={handleAdd} loaded={loaded} />
+    return <StickyHeadTable info={info} data={products} addFormContent={<ProductForm handleAdd={handleAdd} mode='Add'/>} loaded={loaded} />
 }
 
 export default Products

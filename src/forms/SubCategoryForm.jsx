@@ -23,6 +23,10 @@ import Chip from '@material-ui/core/Chip';
 import SpecForm from './SpecForm'
 import ImageUploadForm from "./ImageUploadForm";
 import useToggle from '../customHooks/useToggle';
+import { DispatchSubCategoriesContext } from '../contexts/SubCategoriesContext';
+import { NotificationContext } from '../App';
+import { useContext } from 'react';
+import axios from 'axios'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -67,6 +71,8 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function SubCategoryForm(props) {
+    const {handleNotification} = useContext(NotificationContext);
+    const dispatchSubCategories = useContext(DispatchSubCategoriesContext)
     const [open, toggleOpen] = useToggle(false);
     const [imageSource, setImageSource] = useState(props.data?.photo)
     const [name, setName] = useState(props.data?.name)
@@ -104,11 +110,21 @@ export default function SubCategoryForm(props) {
         setSpecs((oldSpecs) => oldSpecs.filter((spec, oldIndex) => index !== oldIndex))
     }
     const handleSubmit = () => {
-        let data = { photo: imageSource, name, specs, category: props.categoryId }
+        let data = { photo: imageSource, name, specs, category: props.categoryID }
         if (props.mode === 'Add') {
             props.handleAdd(data)
         } else {
-            props.handleEdit(data, props.data?._id)
+            axios.put(`http://localhost:3000/api/v1/subCategory/update/${props.data._id}`, data, {
+                headers: {
+                    'Authorization': localStorage.getItem('token')
+                }
+            }).then(res => {
+                console.log(res.data.subCategory)
+                dispatchSubCategories({ type: 'UPDATE', subCategory: res.data.subCategory })
+                handleNotification('success', "Sub Category Updated Successfully")
+            }).catch(error => {
+                console.log(error)
+            })
         }
 
         toggleTouchedName(false)

@@ -1,25 +1,19 @@
 import { useContext } from 'react'
 import StickyHeadTable from '../shared/MainTable'
-import axios from 'axios'
-import { styled } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
-import tooltipClasses from '@material-ui/core/Tooltip';
+import SubCategoryForm from '../forms/SubCategoryForm';
 import {NotificationContext} from '../App'
+import { SubCategoriesContext } from '../contexts/SubCategoriesContext'
+import { DispatchSubCategoriesContext } from '../contexts/SubCategoriesContext'
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios'
 
-const BootstrapTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} arrow classes={{ popper: className }} />
-))(({ theme }) => ({
-    [`& .${tooltipClasses.arrow}`]: {
-        color: theme.palette.common.black,
-    },
-    [`& .${tooltipClasses.tooltip}`]: {
-        backgroundColor: theme.palette.common.black,
-    },
-}));
-
-const SubCategories = (props) => {
+const SubCategories = () => {
     const {handleNotification} = useContext(NotificationContext);
+    const subCategories = useContext(SubCategoriesContext)
+    const dispatchSubCategories = useContext(DispatchSubCategoriesContext)
 
+    const {categoryID} = useParams()
     const info = {
         header: 'Sub Categories',
         dataFor: 'Sub Category',
@@ -32,17 +26,21 @@ const SubCategories = (props) => {
                 'Authorization': localStorage.getItem('token')
             }
         }).then(res => {
-            axios.get(`http://localhost:3000/api/v1/category/${newSubCategory.category}`, {
-                headers: {
-                    'Authorization': localStorage.getItem('token')
-                }
-            }).then(res => {
-                props.setData(res.data.category.subCategories)
-                handleNotification('success', "Sub Category Added Successfully")
-            })
+            dispatchSubCategories({type:'ADD', subCategory:res.data.subCategory})
+            handleNotification('success', "Sub Category Added Successfully")
         })
     }
-    return <StickyHeadTable categoryId={props.categoryId} info={info} data={props.subCategories} handleAdd={handleAdd} />
+    
+    useEffect(()=> {
+        axios.get(`http://localhost:3000/api/v1/category/${categoryID}`,{
+            headers: {
+                'Authorization': localStorage.getItem('token')
+            }
+        }).then(res=>{
+            dispatchSubCategories({type:'SET', subCategories:res.data.category.subCategories})
+        })
+    }, [])
+    return <StickyHeadTable info={info} data={subCategories} addFormContent={<SubCategoryForm handleAdd={handleAdd} categoryID={categoryID} mode="Add"/>} />
 }
 
 export default SubCategories
