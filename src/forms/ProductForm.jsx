@@ -171,7 +171,6 @@ export default function ProductForm(props) {
     const handleSubmit = () => {
         if (props.mode === 'Add') {
             let addData = { photo:imageSource, name,description, stock, price, category: categoryId, subCategory: subCategoryId, specs: finalSpecs, model:model }
-            console.log(addData)
             axios.post('http://localhost:3000/api/v1/product/add', addData, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -187,7 +186,7 @@ export default function ProductForm(props) {
                 })
             })
         } else {
-            let editData = { photo:imageSource, name, description, stock, price   }
+            let editData = { name, description, stock, price   }
             axios.put(`http://localhost:3000/api/v1/product/update/${props.data?._id}`, editData, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -256,7 +255,7 @@ export default function ProductForm(props) {
                     {`${props.mode} Product`}
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
-                    <ImageUploadForm photo={imageSource} setImage={handleImageChange}/>
+                {props.mode !== 'Edit' &&<ImageUploadForm photo={imageSource} setImage={handleImageChange}/>}
 
                     <MyTextField required helperText={!name && touchedName ? 'required' : ''} error={!name && touchedName ? true : false} variant="outlined" id="name" name="name" onChange={e => {
                         setName(e.target.value)

@@ -8,3 +8,7 @@ export const LogOutGuard = () => {
 export const LogInGuard = () => {
     return Authentication.isAuthinticated() ? <Outlet /> : <Navigate to="/login" />
 }
+
+export const Redirect = () => {
+    return <Navigate to="/404" />
+}

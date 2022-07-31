@@ -9,7 +9,7 @@ const MayRenderMainNav = (props)=> {
         setMayRenderMainNav(!authentication.isAuthinticated())
     }, [location])
     return <>
-        {mayRenderMainNav && props.children}
+        {mayRenderMainNav && location.pathname !== '/404'? props.children:''}
     </>
 }
 

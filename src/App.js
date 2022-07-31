@@ -11,15 +11,14 @@ import SubCategoriesPage from './pages/SubCategoriesPage'
 import OrdersPage from './pages/OrdersPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
-import OtherControlsPage from './pages/OtherControlesPage'
 import MainSliderControlPage from './pages/MainSliderControlPage'
+import ProductPhotosControl from './components/Products/ProductPhotosControl/ProductPhotosControl'
 import MayRenderMainNav from './shared/MayRenderMainNav';
-import MayRenderSideNav from './shared/MayRenderSideNav';
-import { LogInGuard, LogOutGuard } from './auth/authGuards'
-import photo from './shared/assets/main-background.svg'
+import { LogInGuard, LogOutGuard, Redirect } from './auth/authGuards'
 import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import SubCategoriesProvider from './contexts/SubCategoriesContext'
+import PageNotFound from './shared/PageNotFound';
 
 
 function Alert(props) {
@@ -46,7 +45,7 @@ function App() {
   };
 
   return (
-    <div style={{ backgroundImage: `url(${photo})`, backgroundSize: "cover", height: '100vh' }}>
+    <>
       <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={open} autoHideDuration={5000} onClose={handleClose}>
         <Alert onClose={handleClose} severity={state}>
           {message}
@@ -59,33 +58,30 @@ function App() {
             <MayRenderMainNav>
               <MainNavigation />
             </MayRenderMainNav>
-            <MayRenderSideNav>
-              <PersistentDrawerLeft />
-            </MayRenderSideNav>
             <Routes>
               <Route exact path='/' element={<LogInGuard />}>
-                <Route path="/" element={<HomePage />} />
+                <Route path="/" element={<PersistentDrawerLeft><HomePage /></PersistentDrawerLeft>} />
               </Route>
               <Route exact path='/users' element={<LogInGuard />}>
-                <Route path="/users" element={<UsersPage />} />
+                <Route path="/users" element={<PersistentDrawerLeft><UsersPage /></PersistentDrawerLeft>} />
               </Route>
               <Route exact path='/products' element={<LogInGuard />}>
-                <Route path="/products" element={<ProductsPage />} />
+                <Route path="/products" element={<PersistentDrawerLeft><ProductsPage /></PersistentDrawerLeft>} />
+              </Route>
+              <Route exact path='/productPhotos/:id' element={<LogInGuard />}>
+                <Route path="/productPhotos/:id" element={<PersistentDrawerLeft><ProductPhotosControl /></PersistentDrawerLeft>} />
               </Route>
               <Route exact path='/categories' element={<LogInGuard />}>
-                <Route path="/categories" element={<CategoriesPage />} />
+                <Route path="/categories" element={<PersistentDrawerLeft><CategoriesPage /></PersistentDrawerLeft>} />
               </Route>
               <Route exact path='/subCategories/:categoryID' element={<LogInGuard />}>
-                <Route path="/subCategories/:categoryID" element={<SubCategoriesPage />} />
+                <Route path="/subCategories/:categoryID" element={<PersistentDrawerLeft><SubCategoriesPage /></PersistentDrawerLeft>} />
               </Route>
               <Route exact path='/orders' element={<LogInGuard />}>
-                <Route path="/orders" element={<OrdersPage />} />
-              </Route>
-              <Route exact path='/otherControls' element={<LogInGuard />}>
-                <Route path="/otherControls" element={<OtherControlsPage />} />
+                <Route path="/orders" element={<PersistentDrawerLeft><OrdersPage /></PersistentDrawerLeft>} />
               </Route>
               <Route exact path='/mainSliderControl' element={<LogInGuard />}>
-                <Route path="/mainSliderControl" element={<MainSliderControlPage />} />
+                <Route path="/mainSliderControl" element={<PersistentDrawerLeft><MainSliderControlPage /></PersistentDrawerLeft>} />
               </Route>
               <Route exact path='/login' element={<LogOutGuard />}>
                 <Route path="/login" element={<LoginPage />} />
@@ -93,12 +89,13 @@ function App() {
               <Route exact path='/signup' element={<LogOutGuard />}>
                 <Route path="/signup" element={<SignupPage />} />
               </Route>
-              <Route path="*" element={<div>404 - NotFound</div>} />
+              <Route path="*" element={<Redirect />} />
+              <Route path="/404" element={<PageNotFound />} />
             </Routes>
           </BrowserRouter>
         </SubCategoriesProvider>
       </NotificationContext.Provider>
-    </div>
+    </>
   );
 }
 

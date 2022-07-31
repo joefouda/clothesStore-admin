@@ -1,4 +1,4 @@
-import MainSliderControl from "../components/OtherControls/MainSliderControl/MainSliderControl"
+import MainSliderControl from "../components/Home/MainSliderControl/MainSliderControl"
 
 const MainSliderControlPage = ()=> {
     return <MainSliderControl />
