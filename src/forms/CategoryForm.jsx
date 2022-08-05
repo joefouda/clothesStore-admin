@@ -85,6 +85,7 @@ export default function CategoryForm(props) {
                     'Authorization': localStorage.getItem('token')
                 }
             }).then(res => {
+                console.log(res)
                 axios.get('http://localhost:3000/api/v1/category', {
                     headers: {
                         'Authorization': localStorage.getItem('token')

@@ -101,11 +101,7 @@ export default function PersistentDrawerLeft(props) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
-  // const handleClick = (value) => {
-  //   setPage(value)
-  // }
-
+  
   const handleLogOut = () => {
     Authentication.logOut()
     navigate('/login')
@@ -157,10 +153,6 @@ export default function PersistentDrawerLeft(props) {
           <ListItem button onClick={() => navigate('/users')}>
             <ListItemIcon><PersonIcon /></ListItemIcon>
             <ListItemText primary={'Users'} />
-          </ListItem>
-          <ListItem button onClick={() => navigate('/products')}>
-            <ListItemIcon><FeaturedPlayListOutlinedIcon /></ListItemIcon>
-            <ListItemText primary={'Products'} />
           </ListItem>
           <ListItem button onClick={() => navigate('/categories')}>
             <ListItemIcon><CategoryIcon /></ListItemIcon>

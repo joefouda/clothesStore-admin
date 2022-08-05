@@ -10,10 +10,19 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import TextField from '@material-ui/core/TextField';
-import ImageUploadForm from "./ImageUploadForm";
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import Chip from '@material-ui/core/Chip';
+import SpecForm from './SpecForm'
 import useToggle from '../customHooks/useToggle';
-import { DispatchSubCategoriesContext } from '../contexts/SubCategoriesContext';
+import { DispatchModelsContext } from '../contexts/ModelsContext';
 import { NotificationContext } from '../App';
 import { useContext } from 'react';
 import axios from 'axios'
@@ -60,45 +69,61 @@ BootstrapDialogTitle.propTypes = {
     onClose: PropTypes.func.isRequired,
 };
 
-export default function SubCategoryForm(props) {
+export default function ModelForm(props) {
     const { handleNotification } = useContext(NotificationContext);
-    const dispatchSubCategories = useContext(DispatchSubCategoriesContext)
+    const dispatchModels = useContext(DispatchModelsContext)
     const [open, toggleOpen] = useToggle(false);
-    const [imageSource, setImageSource] = useState(props.data?.photo)
     const [name, setName] = useState(props.data?.name)
+    const [specs, setSpecs] = useState(props.data?.specs || [])
     const [touchedName, toggleTouchedName] = useToggle(false)
 
     const handleClickOpen = () => {
-        toggleOpen();
+        toggleOpen(true);
         setName(props.data?.name)
-        setImageSource(props.data?.photo)
+        setSpecs(props.data?.specs || [])
     };
     const handleClose = () => {
-        toggleOpen();
+        toggleOpen(false);
         toggleTouchedName(false)
         setName('')
-        setImageSource('')
+        setSpecs([])
     };
+
+    const handleAddSpec = (newSpec) => {
+        setSpecs((oldSpecs) => [...oldSpecs, newSpec])
+    }
+
+    const handleEditSpec = (editedSpec, index) => {
+        setSpecs((oldSpecs) => oldSpecs.map((oldSpec, oldIndex) => {
+            if (oldIndex === index) {
+                return editedSpec
+            }
+            return oldSpec
+        }))
+    }
+
+    const handleDeleteSpec = (index) => {
+        setSpecs((oldSpecs) => oldSpecs.filter((spec, oldIndex) => index !== oldIndex))
+    }
     const handleSubmit = () => {
-        let data = { photo: imageSource, name, category: props.categoryID }
+        let data = { name, specs, subCategory: props.subCategoryID, category: props.categoryID }
         if (props.mode === 'Add') {
-            axios.post('http://localhost:3000/api/v1/subCategory/add', data, {
+            axios.post('http://localhost:3000/api/v1/model', data, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
             }).then(res => {
-                console.log(res)
-                dispatchSubCategories({ type: 'ADD', subCategory: res.data.subCategory })
-                handleNotification('success', "Sub Category Added Successfully")
+                dispatchModels({ type: 'ADD', model: res.data.model })
+                handleNotification('success', "Model Added Successfully")
             })
         } else {
-            axios.put(`http://localhost:3000/api/v1/subCategory/update/${props.data._id}`, data, {
+            axios.put(`http://localhost:3000/api/v1/model/${props.data._id}`, data, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
             }).then(res => {
-                dispatchSubCategories({ type: 'UPDATE', subCategory: res.data.subCategory })
-                handleNotification('success', "Sub Category Updated Successfully")
+                dispatchModels({ type: 'UPDATE', model: res.data.model })
+                handleNotification('success', "Model Updated Successfully")
             }).catch(error => {
                 console.log(error)
             })
@@ -106,11 +131,8 @@ export default function SubCategoryForm(props) {
 
         toggleTouchedName(false)
         setName('')
-        setImageSource('')
-        toggleOpen();
-    }
-    const handleImageChange = (childData) => {
-        setImageSource(childData)
+        setSpecs([])
+        toggleOpen(false);
     }
     return (
         <div>
@@ -119,7 +141,7 @@ export default function SubCategoryForm(props) {
                 color="primary"
                 startIcon={<AddIcon />}
             >
-                Add new Sub Category
+                Add new Model
             </Button> : <IconButton aria-label="edit" onClick={handleClickOpen}><EditIcon /></IconButton>}
             <BootstrapDialog
                 onClose={handleClose}
@@ -128,18 +150,43 @@ export default function SubCategoryForm(props) {
                 open={open}
             >
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    {`${props.mode} Sub Category`}
+                    {`${props.mode} Model`}
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
-                    <ImageUploadForm photo={imageSource} setImage={handleImageChange} />
-
                     <MyTextField required helperText={!name && touchedName ? 'required' : ''} error={!name && touchedName ? true : false} variant="outlined" id="name" name="name" onChange={e => {
                         setName(e.target.value)
                         toggleTouchedName(true)
                     }} label="Name" placeholder='Name' defaultValue={name} />
+                    {specs.length !== 0 ? <TableContainer component={Paper}>
+                        <Table aria-label="caption table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>name</TableCell>
+                                    <TableCell>options</TableCell>
+                                    <TableCell>Actions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {specs.map((spec, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell component="th" scope="row">
+                                            {spec.name}
+                                        </TableCell>
+                                        <TableCell>{spec.options.map((option, index) => <Chip color="primary" key={index} label={option} />)}</TableCell>
+                                        <TableCell style={{ display: 'flex' }}>
+                                            <SpecForm mode={'Edit'} spec={spec} handleEditSpec={handleEditSpec} index={index} />
+                                            <IconButton aria-label="delete" onClick={() => handleDeleteSpec(index)}><DeleteIcon /></IconButton>
+                                        </TableCell>
+
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer> : ''}
+                    <SpecForm mode={'Add'} handleAddSpec={handleAddSpec} />
                 </DialogContent>
                 <DialogActions>
-                    <Button color="primary" disabled={!name || !imageSource ? true : false} onClick={handleSubmit}>
+                    <Button color="primary" disabled={!name || specs.length === 0 ? true : false} onClick={handleSubmit}>
                         {props.mode === 'Add' ? 'Add' : 'Save changes'}
                     </Button>
                 </DialogActions>

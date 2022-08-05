@@ -8,6 +8,7 @@ import UsersPage from './pages/UsersPage'
 import ProductsPage from './pages/ProductsPage'
 import CategoriesPage from './pages/CategoriesPage'
 import SubCategoriesPage from './pages/SubCategoriesPage'
+import ModelsPage from './pages/ModelsPage'
 import OrdersPage from './pages/OrdersPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
@@ -19,6 +20,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import SubCategoriesProvider from './contexts/SubCategoriesContext'
 import PageNotFound from './shared/PageNotFound';
+import ModelsProvider from './contexts/ModelsContext';
 
 
 function Alert(props) {
@@ -53,47 +55,52 @@ function App() {
       </Snackbar>
 
       <NotificationContext.Provider value={{ handleNotification }}>
-        <SubCategoriesProvider>
-          <BrowserRouter >
-            <MayRenderMainNav>
-              <MainNavigation />
-            </MayRenderMainNav>
-            <Routes>
-              <Route exact path='/' element={<LogInGuard />}>
-                <Route path="/" element={<PersistentDrawerLeft><HomePage /></PersistentDrawerLeft>} />
-              </Route>
-              <Route exact path='/users' element={<LogInGuard />}>
-                <Route path="/users" element={<PersistentDrawerLeft><UsersPage /></PersistentDrawerLeft>} />
-              </Route>
-              <Route exact path='/products' element={<LogInGuard />}>
-                <Route path="/products" element={<PersistentDrawerLeft><ProductsPage /></PersistentDrawerLeft>} />
-              </Route>
-              <Route exact path='/productPhotos/:id' element={<LogInGuard />}>
-                <Route path="/productPhotos/:id" element={<PersistentDrawerLeft><ProductPhotosControl /></PersistentDrawerLeft>} />
-              </Route>
-              <Route exact path='/categories' element={<LogInGuard />}>
-                <Route path="/categories" element={<PersistentDrawerLeft><CategoriesPage /></PersistentDrawerLeft>} />
-              </Route>
-              <Route exact path='/subCategories/:categoryID' element={<LogInGuard />}>
-                <Route path="/subCategories/:categoryID" element={<PersistentDrawerLeft><SubCategoriesPage /></PersistentDrawerLeft>} />
-              </Route>
-              <Route exact path='/orders' element={<LogInGuard />}>
-                <Route path="/orders" element={<PersistentDrawerLeft><OrdersPage /></PersistentDrawerLeft>} />
-              </Route>
-              <Route exact path='/mainSliderControl' element={<LogInGuard />}>
-                <Route path="/mainSliderControl" element={<PersistentDrawerLeft><MainSliderControlPage /></PersistentDrawerLeft>} />
-              </Route>
-              <Route exact path='/login' element={<LogOutGuard />}>
-                <Route path="/login" element={<LoginPage />} />
-              </Route>
-              <Route exact path='/signup' element={<LogOutGuard />}>
-                <Route path="/signup" element={<SignupPage />} />
-              </Route>
-              <Route path="*" element={<Redirect />} />
-              <Route path="/404" element={<PageNotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </SubCategoriesProvider>
+        <ModelsProvider>
+          <SubCategoriesProvider>
+            <BrowserRouter >
+              <MayRenderMainNav>
+                <MainNavigation />
+              </MayRenderMainNav>
+              <Routes>
+                <Route exact path='/' element={<LogInGuard />}>
+                  <Route path="/" element={<PersistentDrawerLeft><HomePage /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/users' element={<LogInGuard />}>
+                  <Route path="/users" element={<PersistentDrawerLeft><UsersPage /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/:modelID/products' element={<LogInGuard />}>
+                  <Route path="/:modelID/products" element={<PersistentDrawerLeft><ProductsPage /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/:id/productPhotos' element={<LogInGuard />}>
+                  <Route path="/:id/productPhotos" element={<PersistentDrawerLeft><ProductPhotosControl /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/categories' element={<LogInGuard />}>
+                  <Route path="/categories" element={<PersistentDrawerLeft><CategoriesPage /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/:categoryID/subCategories' element={<LogInGuard />}>
+                  <Route path="/:categoryID/subCategories" element={<PersistentDrawerLeft><SubCategoriesPage /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/:categoryID/:subCategoryID/models' element={<LogInGuard />}>
+                  <Route path="/:categoryID/:subCategoryID/models" element={<PersistentDrawerLeft><ModelsPage /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/orders' element={<LogInGuard />}>
+                  <Route path="/orders" element={<PersistentDrawerLeft><OrdersPage /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/mainSliderControl' element={<LogInGuard />}>
+                  <Route path="/mainSliderControl" element={<PersistentDrawerLeft><MainSliderControlPage /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/login' element={<LogOutGuard />}>
+                  <Route path="/login" element={<LoginPage />} />
+                </Route>
+                <Route exact path='/signup' element={<LogOutGuard />}>
+                  <Route path="/signup" element={<SignupPage />} />
+                </Route>
+                <Route path="*" element={<Redirect />} />
+                <Route path="/404" element={<PageNotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </SubCategoriesProvider>
+        </ModelsProvider>
       </NotificationContext.Provider>
     </>
   );

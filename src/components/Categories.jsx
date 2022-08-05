@@ -5,11 +5,8 @@ import CategoryForm from '../forms/CategoryForm'
 import Button from '@material-ui/core/Button';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import { useNavigate } from 'react-router-dom';
-import { DispatchSubCategoriesContext } from '../contexts/SubCategoriesContext';
-import { useContext } from 'react';
 
 const Categories = (props)=>{
-    const dispatchSubCategories = useContext(DispatchSubCategoriesContext)
     const [categories,setCategories] = useState([])
     const [loaded, setloaded] = useState(false)
     const navigate = useNavigate()
@@ -19,7 +16,7 @@ const Categories = (props)=>{
             return {
                 ...ele,
                 actions: <CategoryForm mode='Edit' handleEdit={handleEdit} data={ele}/>,
-                moreDetails: <Button color="primary" onClick={()=>navigate(`/subCategories/${ele._id}`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
+                moreDetails: <Button color="primary" onClick={()=>navigate(`/${ele._id}/subCategories`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
             }
         })
         setCategories(() => [...newData])
@@ -30,7 +27,7 @@ const Categories = (props)=>{
             return {
                 ...ele,
                 actions: <CategoryForm mode='Edit' handleEdit={handleEdit} data={ele}/>,
-                moreDetails: <Button color="primary" onClick={()=>navigate(`/subCategories/${ele._id}`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
+                moreDetails: <Button color="primary" onClick={()=>navigate(`/${ele._id}/subCategories`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
             }
         })
         setCategories(() => [...newData])
@@ -52,7 +49,7 @@ const Categories = (props)=>{
                 return {
                     ...ele,
                     actions: <CategoryForm mode='Edit' handleEdit={handleEdit} data={ele}/>,
-                    moreDetails: <Button color="primary" onClick={()=> navigate(`/subCategories/${ele._id}`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
+                    moreDetails: <Button color="primary" onClick={()=> navigate(`/${ele._id}/subCategories`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
                 }
             })
             setCategories(() => [...data])

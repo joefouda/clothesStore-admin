@@ -1,34 +1,14 @@
-import { styled } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
-import tooltipClasses from '@material-ui/core/Tooltip';
-import Chip from '@material-ui/core/Chip';
 import SubCategoryForm from '../forms/SubCategoryForm';
-
-const BootstrapTooltip = styled(({ className, ...props }) => (
-  <Tooltip {...props} arrow classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.arrow}`]: {
-    color: theme.palette.common.black,
-  },
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.common.black,
-  },
-}));
-
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import Button from '@material-ui/core/Button';
+import { Link } from 'react-router-dom';
 
 const setData = (subData) => {
   const data = subData.map(ele => {
     return {
       ...ele,
-      specs: ele.specs.map((spec, index) => (
-        <BootstrapTooltip key={index} title={spec.options.map((ele, index) => index === spec.options.length - 1 ? ele : `${ele} - `)}>
-          <Chip
-            color='primary'
-            label={spec.name}
-          />
-        </BootstrapTooltip>
-      )),
       actions: <SubCategoryForm data={ele} mode={'Edit'} />,
+      moreDetails: <Link to={`/${ele.category}/${ele._id}/models`}><Button type='primary' startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view models</Button></Link>,
     }
   })
   return data
@@ -37,15 +17,8 @@ const setData = (subData) => {
 const setElement = (newSubCategory) => {
   return {
     ...newSubCategory,
-    specs: newSubCategory.specs.map((spec, index) => (
-      <BootstrapTooltip key={index} title={spec.options.map((ele, index) => index === spec.options.length - 1 ? ele : `${ele} - `)}>
-        <Chip
-          color='primary'
-          label={spec.name}
-        />
-      </BootstrapTooltip>
-    )),
     actions: <SubCategoryForm data={newSubCategory} categoryId={newSubCategory.category} mode={'Edit'} />,
+    moreDetails: <Link to={`/${newSubCategory.category}/${newSubCategory._id}/models`}><Button type='primary' startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view models</Button></Link>,
   }
 }
 

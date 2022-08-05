@@ -4,7 +4,6 @@ import { useArrayReducer } from '../customHooks/useArrayReducer';
 
 export const SubCategoriesContext = createContext()
 export const DispatchSubCategoriesContext = createContext()
-export const CartVisableContext = createContext()
 
 const SubCategoriesProvider = (props) => {
     const [subCategories, dispatch] = useArrayReducer(SubCategoriesReducer, [])

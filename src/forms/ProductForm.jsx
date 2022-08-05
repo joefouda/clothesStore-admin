@@ -76,12 +76,6 @@ export default function ProductForm(props) {
     const [description, setDescription] = useState(props.data?.description)
     const [stock, setStock] = useState(props.data?.stock)
     const [price, setPrice] = useState(props.data?.price)
-    const [category, setCategory] = useState('')
-    const [categories, setCategories] = useState([])
-    const [subCategory, setSubCategory] = useState('')
-    const [subCategories, setSubCategories] = useState([])
-    const [model, setModel] = useState('new')
-    const [models, setModels] = useState([])
     const [specOption, setSpecOption] = useState([])
     const [specs, setSpecs] = useState([])
     const [finalSpecs, setFinalSpecs] = useState([])
@@ -90,39 +84,7 @@ export default function ProductForm(props) {
     const [touchedStock, toggleTouchedStock] = useToggle(false)
     const [touchedPrice, toggleTouchedPrice] = useToggle(false)
     const {handleNotification} = useContext(NotificationContext);
-
-    const [categoryId, setCategoryId] = useState('')
-    const [subCategoryId, setSubCategoryId] = useState('')
-
-
-
-    const handleCategoryChange = (event) => {
-        setCategory(event.target.value);
-
-        const category = categories.find(ele => {
-            return ele.name === event.target.value
-        })
-        setCategoryId(category._id)
-        setSubCategories(() => [...category.subCategories])
-    };
-
-    const handleSubCategoryChange = (event) => {
-        setSubCategory(event.target.value);
-        const subCategory = subCategories.find(ele => {
-            return ele.name === event.target.value
-        })
-        setSubCategoryId(subCategory._id)
-        axios.get(`http://localhost:3000/api/v1/subcategory/${subCategory._id}`).then((res) => {
-            setModels(() => [...res.data.subCategory.models])
-            setSpecs(() => [...subCategory.specs])
-        })
-
-    };
-
-    const handleModelChange = (event)=>{
-        setModel(event.target.value);
-    }
-
+    
     const handleOptionChange = (event, spec, index) => {
         const newOptions = [...specOption]
         newOptions[index] = event.target.value
@@ -141,11 +103,11 @@ export default function ProductForm(props) {
     const handleClickOpen = () => {
         toggleOpen(true);
         setName(props.data?.name)
+        setSpecs(props.model.specs)
         setDescription(props.data?.description)
         setImageSource(props.data?.photo)
         setStock(props.data?.stock)
         setPrice(props.data?.price)
-        setCategory(props.data?.category)
     };
     const handleClose = () => {
         toggleOpen(false);
@@ -158,11 +120,6 @@ export default function ProductForm(props) {
         setImageSource('')
         setStock('')
         setPrice('')
-        setCategory('')
-        setSubCategory('')
-        setSubCategories([])
-        setModel('')
-        setModels([])
         setSpecs([])
         setFinalSpecs([])
         setSpecOption([])
@@ -170,12 +127,14 @@ export default function ProductForm(props) {
 
     const handleSubmit = () => {
         if (props.mode === 'Add') {
-            let addData = { photo:imageSource, name,description, stock, price, category: categoryId, subCategory: subCategoryId, specs: finalSpecs, model:model }
+            let addData = { photo:imageSource, name,description, stock, price, category: props.model.category, subCategory: props.model.subCategory, specs: finalSpecs, model:props.model._id }
+            console.log(addData)
             axios.post('http://localhost:3000/api/v1/product/add', addData, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
             }).then(res => {
+                console.log(res)
                 axios.get('http://localhost:3000/api/v1/product', {
                     headers: {
                         'Authorization': localStorage.getItem('token')
@@ -212,11 +171,6 @@ export default function ProductForm(props) {
         setImageSource('')
         setStock('')
         setPrice('')
-        setCategory('')
-        setSubCategory('')
-        setSubCategories([])
-        setModel('')
-        setModels([])
         setSpecs([])
         setFinalSpecs([])
         setSpecOption([])
@@ -226,15 +180,6 @@ export default function ProductForm(props) {
     const handleImageChange = (childData)=>{
         setImageSource(childData)
     }
-    useEffect(() => {
-        axios.get('http://localhost:3000/api/v1/category', {
-            headers: {
-                'Authorization': localStorage.getItem('token')
-            }
-        }).then((res) => {
-            setCategories(() => [...res.data.categories])
-        })
-    }, [])
     
     return (
         <div>
@@ -277,46 +222,6 @@ export default function ProductForm(props) {
                         toggleTouchedDescription(true)
                     }} label="Description" placeholder={!description && touchedDescription?'required':'Description'} defaultValue={description} />
 
-                    {props.mode === 'Add' ? <MyFormControl variant="outlined" required size="small">
-                        <InputLabel id="demo-select-small">Category</InputLabel>
-                        <Select
-                            labelId="demo-select-small"
-                            id="demo-select-small"
-                            value={category || ''}
-                            label="Category"
-                            onChange={handleCategoryChange}
-                        >
-                            {categories.map((category) => (<MenuItem key={category._id} value={category.name}>{category.name}</MenuItem>))}
-                        </Select>
-                    </MyFormControl> : ''}
-
-                    {subCategories.length !== 0 && props.mode === 'Add' ? <MyFormControl variant="outlined" required size="small">
-                        <InputLabel id="demo-select-small">Sub Category</InputLabel>
-                        <Select
-                            labelId="demo-select-small"
-                            id="demo-select-small"
-                            value={subCategory || ''}
-                            label="Sub Category"
-                            onChange={handleSubCategoryChange}
-                        >
-                            {subCategories.map((subCategory) => (<MenuItem key={subCategory._id} value={subCategory.name}>{subCategory.name}</MenuItem>))}
-                        </Select>
-                    </MyFormControl> : ''}
-
-                    {models.length !== 0 && props.mode === 'Add' ? <MyFormControl variant="outlined" size="small">
-                        <InputLabel id="demo-select-small">Model</InputLabel>
-                        <Select
-                            labelId="demo-select-small"
-                            id="demo-select-small"
-                            value={model || ''}
-                            label="Model"
-                            onChange={handleModelChange}
-                        >
-                            {models.map((model) => (<MenuItem key={model} value={model}>{model}</MenuItem>))}
-                            <MenuItem value='new'>New Model</MenuItem>
-                        </Select>
-                    </MyFormControl> : ''}
-
                     {specs.length !== 0 && props.mode === 'Add' ? specs.map((spec, index) => (<MyFormControl key={spec._id} variant="outlined" required size="small">
                         <InputLabel id="demo-select-small">{spec.name}</InputLabel>
                         <Select
@@ -331,7 +236,7 @@ export default function ProductForm(props) {
                     </MyFormControl>)) : ''}
                 </DialogContent>
                 <DialogActions>
-                    <Button color="primary" disabled={!name || !imageSource || !stock || !price || ((!category || !subCategory || specOption.length !== specs.length) && props.mode !== 'Edit') ? true : false} onClick={handleSubmit}>
+                    <Button color="primary" disabled={!name || !imageSource || !stock || !price || (( specOption.length !== specs.length) && props.mode !== 'Edit') ? true : false} onClick={handleSubmit}>
                         {props.mode === 'Add' ? 'Add' : 'Save changes'}
                     </Button>
                 </DialogActions>
