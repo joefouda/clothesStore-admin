@@ -126,9 +126,9 @@ export default function SpecForm(props) {
                         toggleTouchedName(true)
                     }} label="Name" placeholder='Name' value={name} />
 
-                    <MyTextField variant="outlined" id="option" name="option" onChange={e => {
+                    {name === 'color'?<MyTextField id="option" name="option" type="color" onChange={(e)=> setOption(e.target.value)} />:<MyTextField variant="outlined" id="option" name="option" onChange={e => {
                         setOption(e.target.value)
-                    }} label="Option" placeholder='Option' value={option} />
+                    }} label="Option" placeholder='Option' value={option} />}
 
                     {options.length !==0?<Paper
                         style={{
@@ -141,8 +141,9 @@ export default function SpecForm(props) {
                         component="ul"
                     >
                         {options.map((option, index) => (<Chip
+                            style={{backgroundColor:name === 'color' && option, minWidth:'3vw', boxShadow:'1px 0px 7px grey'}}
+                            label={name === 'color'?'': option}
                             key={index}
-                            label={option}
                             onDelete={handleDelete(option)}
                         />
                         ))}

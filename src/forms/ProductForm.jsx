@@ -231,7 +231,7 @@ export default function ProductForm(props) {
                             label={spec.name}
                             onChange={(event) => handleOptionChange(event, spec.name, index)}
                         >
-                            {spec.options.map((option, index) => (<MenuItem key={index} value={option}>{option}</MenuItem>))}
+                            {spec.options.map((option, index) => (<MenuItem style={{backgroundColor: spec.name === 'color' && option, textShadow:'1px 0 7px grey'}} key={index} value={option}>{option}</MenuItem>))}
                         </Select>
                     </MyFormControl>)) : ''}
                 </DialogContent>

@@ -74,13 +74,13 @@ export default function ModelForm(props) {
     const dispatchModels = useContext(DispatchModelsContext)
     const [open, toggleOpen] = useToggle(false);
     const [name, setName] = useState(props.data?.name)
-    const [specs, setSpecs] = useState(props.data?.specs || [])
+    const [specs, setSpecs] = useState(props.data?.specs || [{name: 'color', options:[]}])
     const [touchedName, toggleTouchedName] = useToggle(false)
 
     const handleClickOpen = () => {
         toggleOpen(true);
         setName(props.data?.name)
-        setSpecs(props.data?.specs || [])
+        setSpecs(props.data?.specs || [{name: 'color', options:[]}])
     };
     const handleClose = () => {
         toggleOpen(false);
@@ -172,7 +172,7 @@ export default function ModelForm(props) {
                                         <TableCell component="th" scope="row">
                                             {spec.name}
                                         </TableCell>
-                                        <TableCell>{spec.options.map((option, index) => <Chip color="primary" key={index} label={option} />)}</TableCell>
+                                        <TableCell>{spec.options.map((option, index) => <Chip style={{backgroundColor:spec.name === 'color' && option, minWidth:'3vw'}} label={spec.name === 'color'?'': option} key={index} />)}</TableCell>
                                         <TableCell style={{ display: 'flex' }}>
                                             <SpecForm mode={'Edit'} spec={spec} handleEditSpec={handleEditSpec} index={index} />
                                             <IconButton aria-label="delete" onClick={() => handleDeleteSpec(index)}><DeleteIcon /></IconButton>
