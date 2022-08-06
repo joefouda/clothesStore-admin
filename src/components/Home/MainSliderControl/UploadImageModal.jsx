@@ -20,17 +20,15 @@ const UploadImageModal = (props) => {
           'Authorization': localStorage.getItem('token')
         }
       }).then(res => {
-        console.log(res)
         props.setPhotos(res.data.product.photos)
       })
       setIsModalVisible(false);
-    }else {
-      axios.put('http://localhost:3000/api/v1/other/mainSliderPhotos', { photo }, {
+    } else {
+      axios.put(props.url, { photo }, {
         headers: {
           'Authorization': localStorage.getItem('token')
         }
       }).then(res => {
-        console.log(res)
         props.setPhotos(res.data.mainSlider.photos)
       })
     }

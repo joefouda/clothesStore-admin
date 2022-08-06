@@ -1,25 +1,57 @@
 .main-slider-control-container {
     padding: 20px;
     display: flex;
+    margin: auto;
+    height: 80vh;
+}
+
+.main-slider-control-container-content {
+    padding: 20px;
+    display: flex;
+    height: 100%;
     flex-direction: column;
+    text-align: center;
     background-color: white;
     gap: 2vh;
-    margin: auto;
-    width: 60vw;
-    max-height: 70vh;
+    flex:1;
+}
+
+.main-slider-control-container-photos {
+    position: relative;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-color: white;
+    gap: 2vh;
     -ms-overflow-style: none;
     /* for Internet Explorer, Edge */
     scrollbar-width: none;
     /* for Firefox */
     overflow-y: scroll;
+    height: -webkit-fill-available;
 }
 
-.main-slider-control-container::-webkit-scrollbar {
+.main-slider-control-container-photos::-webkit-scrollbar {
     width: 12px;
     /* width of the entire scrollbar */
 }
 
-.main-slider-control-container::-webkit-scrollbar-thumb {
+.main-slider-control-container-photos::-webkit-scrollbar-thumb {
+    background-color: rgb(27, 125, 252);
+    /* color of the scroll thumb */
+    border-radius: 20px;
+    /* roundness of the scroll thumb */
+    border: 3px solid white;
+    /* creates padding around scroll thumb */
+}
+
+.main-slider-control-container-photos::-webkit-scrollbar {
+    width: 12px;
+    /* width of the entire scrollbar */
+}
+
+.main-slider-control-container-photos::-webkit-scrollbar-thumb {
     background-color: rgb(27, 125, 252);
     /* color of the scroll thumb */
     border-radius: 20px;

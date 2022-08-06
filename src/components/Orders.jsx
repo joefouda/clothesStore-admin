@@ -33,6 +33,7 @@ const Orders = () => {
                 'Authorization': localStorage.getItem('token')
             }
         }).then((res) => {
+            console.log(res)
             setData(res.data.orders)
             setloaded(false)
         })
