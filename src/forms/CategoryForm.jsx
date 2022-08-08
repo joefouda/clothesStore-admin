@@ -80,7 +80,7 @@ export default function CategoryForm(props) {
     const handleSubmit = () => {
         let data = { photo:imageSource, name }
         if (props.mode === 'Add') {
-            axios.post('http://localhost:3000/api/v1/category/add', data, {
+            axios.post('http://localhost:3000/api/v1/category', data, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
@@ -96,7 +96,7 @@ export default function CategoryForm(props) {
                 })
             })
         } else {
-            axios.put(`http://localhost:3000/api/v1/category/update/${props.data?._id}`, data, {
+            axios.put(`http://localhost:3000/api/v1/category/${props.data?._id}`, data, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }

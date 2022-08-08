@@ -82,7 +82,7 @@ export default function SubCategoryForm(props) {
     const handleSubmit = () => {
         let data = { photo: imageSource, name, category: props.categoryID }
         if (props.mode === 'Add') {
-            axios.post('http://localhost:3000/api/v1/subCategory/add', data, {
+            axios.post('http://localhost:3000/api/v1/subCategory', data, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
@@ -92,7 +92,7 @@ export default function SubCategoryForm(props) {
                 handleNotification('success', "Sub Category Added Successfully")
             })
         } else {
-            axios.put(`http://localhost:3000/api/v1/subCategory/update/${props.data._id}`, data, {
+            axios.put(`http://localhost:3000/api/v1/subCategory/${props.data._id}`, data, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
