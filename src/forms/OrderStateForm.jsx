@@ -109,8 +109,8 @@ export default function OrderStateForm(props) {
                         <ToggleButton value="pending">
                             Pending
                         </ToggleButton>
-                        <ToggleButton value="on the way">
-                            On The way
+                        <ToggleButton value="shipped">
+                            Shipped
                         </ToggleButton>
                         <ToggleButton value="delivered">
                             Delivered
