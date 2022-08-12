@@ -2,10 +2,11 @@ import axios from 'axios'
 import StickyHeadTable from '../shared/MainTable'
 import { useEffect, useState } from 'react'
 import OrderStateForm from '../forms/OrderStateForm' 
+import useToggle from '../customHooks/useToggle'
 
 const Orders = () => {
     const [orders, setOrders] = useState([])
-    const [loaded, setloaded] = useState(false)
+    const [progress, toggleProgress] = useToggle(false)
     
     const info = {
         header: 'Orders',
@@ -21,24 +22,24 @@ const Orders = () => {
                 quantity: ele.orderItems.map((ele, index) => (<><span key={index}>{ele.quantity}</span><br /></>)),
                 user: ele.user.name,
                 phone: ele.user.phone,
-                state:<OrderStateForm state={ele.state} setData={setData} orderId={ele._id}/>
+                state:<OrderStateForm state={ele.state} setData={setData} toggleProgress={toggleProgress} orderId={ele._id}/>
             }
         })
         setOrders(() => [...data])
     }
 
     useEffect(() => {
-        setloaded(true)
+        toggleProgress()
         axios.get('http://localhost:3000/api/v1/order', {
             headers: {
                 'Authorization': localStorage.getItem('token')
             }
         }).then((res) => {
             setData(res.data.orders)
-            setloaded(false)
+            toggleProgress()
         })
     }, [])
-    return <StickyHeadTable info={info} data={orders} loaded={loaded} />
+    return <StickyHeadTable info={info} data={orders} progress={progress} />
 }
 
 export default Orders

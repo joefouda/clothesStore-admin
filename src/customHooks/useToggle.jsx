@@ -2,8 +2,8 @@ import {useState} from 'react'
 
 const useToggle = (initialValue)=>{
     const [value,setValue] = useState(initialValue)
-    const toggle = (changable = null)=>{
-        setValue(changable === null ? !value:changable)
+    const toggle = ()=>{
+        setValue(prevState=>!prevState);
     }
 
     return [value,toggle]

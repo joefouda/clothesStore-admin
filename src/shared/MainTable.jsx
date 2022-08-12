@@ -31,7 +31,6 @@ const useStyles = makeStyles({
 
 export default function StickyHeadTable(props) {
     const [actionDisplay, setActionDisplay] = useState(false)
-    const [loadData, setLoadData] = useState(false)
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -57,15 +56,14 @@ export default function StickyHeadTable(props) {
     };
     useEffect(() => {
         setRows(() => [...props.data])
-        setLoadData(props.loaded)
         props.info.header !== 'Orders' && props.info.header !== 'Users' ? setActionDisplay(true) : setActionDisplay(false)
-    }, [props.info.header, props.data, props.loaded])
+    }, [props])
     return (
         <>
             <Typography variant="h4" style={{ marginBottom: 5, color: '#fff' }}>
                 {props.info.header}
             </Typography>
-            {loadData ? <CircularProgress className={classes.progress} /> :<Paper className={classes.root}>
+            {props.progress ? <CircularProgress className='circular-progress' /> :<Paper className={classes.root}>
                 <TableContainer className={classes.container}>
                     <Table id="contain" stickyHeader aria-label="sticky table">
                         <TableHead>
@@ -104,7 +102,6 @@ export default function StickyHeadTable(props) {
                 {actionDisplay ? <TableFooter style={{ display: 'flex' }}>
                     <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {props.addFormContent}
-                        {/* {props.info.header === 'Categories' ? <CategoryForm handleAdd={props.handleAdd} mode="Add" /> : props.info.header === 'Sub Categories' ? <SubCategoryForm categoryId={props.categoryId} handleAdd={props.handleAdd} mode="Add" /> : props.info.header === 'Products' ? <ProductForm handleAdd={props.handleAdd} mode="Add" /> : ''} */}
                     </div>
                     <TablePagination
                         rowsPerPageOptions={[10, 25, 100]}

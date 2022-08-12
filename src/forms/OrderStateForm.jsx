@@ -75,6 +75,7 @@ export default function OrderStateForm(props) {
     };
 
     const handleSubmit = () => {
+        props.toggleProgress()
         axios.put('http://localhost:3000/api/v1/order', { id: props.orderId, state }, {
             headers: {
                 'Authorization': localStorage.getItem('token')
@@ -88,6 +89,7 @@ export default function OrderStateForm(props) {
                 props.setData(res.data.orders)
                 toggleOpen();
                 setState('');
+                props.toggleProgress()
                 handleNotification('success', response.data)
             })
         })

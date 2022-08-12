@@ -4,6 +4,7 @@ import StickyHeadTable from '../shared/MainTable'
 import Switch from '@material-ui/core/Switch';
 import { styled } from '@material-ui/core/styles';
 import {NotificationContext} from '../App'
+import useToggle from '../customHooks/useToggle';
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -57,7 +58,7 @@ const IOSSwitch = styled((props) => (
 }));
 const Users = (props) => {
   const [users, setUsers] = useState([])
-  const [loaded, setloaded] = useState(false)
+  const [progress, toggleProgress] = useToggle(false)
   const {handleNotification} = useContext(NotificationContext);
   
   const info = {
@@ -66,20 +67,21 @@ const Users = (props) => {
     tableHeaders: ['Name', 'Email', 'Address', 'Is Banned']
   }
   const handleToggle = (event) => {
+    toggleProgress()
     axios.put(`http://localhost:3000/api/v1/user/toggleState/${event.target.value}`, {}, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     }).then((res) => {
-      console.log(res)
       handleNotification('success',res.data.message)
+      toggleProgress()
     }).catch(error => {
       handleNotification('error', "Server Error")
     })
   }
 
   useEffect(() => {
-    setloaded(true)
+    toggleProgress()
     axios.get('http://localhost:3000/api/v1/user', {
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -93,11 +95,11 @@ const Users = (props) => {
         }
       })
       setUsers(() => [...data])
-      setloaded(false)
+      toggleProgress()
     })
   },[])
   return <>
-    <StickyHeadTable info={info} data={users} loaded={loaded} />
+    <StickyHeadTable info={info} data={users} progress={progress} />
   </>
 }
 

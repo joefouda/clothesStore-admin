@@ -18,9 +18,7 @@ import MayRenderMainNav from './shared/MayRenderMainNav';
 import { LogInGuard, LogOutGuard, Redirect } from './auth/authGuards'
 import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
-import SubCategoriesProvider from './contexts/SubCategoriesContext'
 import PageNotFound from './shared/PageNotFound';
-import ModelsProvider from './contexts/ModelsContext';
 
 
 function Alert(props) {
@@ -55,8 +53,6 @@ function App() {
       </Snackbar>
 
       <NotificationContext.Provider value={{ handleNotification }}>
-        <ModelsProvider>
-          <SubCategoriesProvider>
             <BrowserRouter >
               <MayRenderMainNav>
                 <MainNavigation />
@@ -99,8 +95,6 @@ function App() {
                 <Route path="/404" element={<PageNotFound />} />
               </Routes>
             </BrowserRouter>
-          </SubCategoriesProvider>
-        </ModelsProvider>
       </NotificationContext.Provider>
     </>
   );

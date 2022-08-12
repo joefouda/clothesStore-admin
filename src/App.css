@@ -3,3 +3,22 @@
     background-image: url('./shared/assets/main-background.svg');
     height: 100vh;
 } */
+
+.circular-progress {
+    position:absolute;
+    top:45%;
+    left:45%
+}
+
+.no-background-button {
+    border:none;
+}
+
+.no-background-button:hover, .no-background-button:focus {
+    color: black;
+    opacity: 0.6;
+}
+
+.defualt-input {
+    width: 100%;
+}

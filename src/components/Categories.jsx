@@ -5,28 +5,38 @@ import CategoryForm from '../forms/CategoryForm'
 import Button from '@material-ui/core/Button';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import { useNavigate } from 'react-router-dom';
+import useToggle from '../customHooks/useToggle';
 
-const Categories = (props)=>{
+const Categories = ()=>{
     const [categories,setCategories] = useState([])
-    const [loaded, setloaded] = useState(false)
+    const [progress, toggleProgress] = useToggle(false)
     const navigate = useNavigate()
 
-    const handleEdit = useCallback((data)=>{
-        const newData = data.map(ele => {
-            return {
-                ...ele,
-                actions: <CategoryForm mode='Edit' handleEdit={handleEdit} data={ele}/>,
-                moreDetails: <Button color="primary" onClick={()=>navigate(`/${ele._id}/subCategories`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
-            }
-        })
-        setCategories(() => [...newData])
-    },[])
+    const addElement = (newCategory)=>{
+        const newEle = {
+            ...newCategory,
+            actions: <CategoryForm mode='Edit' editElement={editElement} toggleProgress={toggleProgress} data={newCategory}/>,
+            moreDetails: <Button color="primary" onClick={()=>navigate(`/${newCategory._id}/subCategories`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
+        }
+        setCategories((oldCategories) => [...oldCategories, newEle])
+    }
 
-    const handleAdd = (data)=>{
+    const editElement = (editedCategory)=>{
+        const editedEle = {
+            ...editedCategory,
+            actions: <CategoryForm mode='Edit' toggleProgress={toggleProgress} editElement={editElement} data={editedCategory}/>,
+            moreDetails: <Button color="primary" onClick={()=>navigate(`/${editedCategory._id}/subCategories`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
+        }
+        setCategories(oldCategories=> oldCategories.map(category=>{
+            return category._id === editedCategory._id ? editedEle : category
+        }))
+    }
+
+    const setData = (data)=>{
         const newData = data.map(ele => {
             return {
                 ...ele,
-                actions: <CategoryForm mode='Edit' handleEdit={handleEdit} data={ele}/>,
+                actions: <CategoryForm mode='Edit' editElement={editElement} toggleProgress={toggleProgress} data={ele}/>,
                 moreDetails: <Button color="primary" onClick={()=>navigate(`/${ele._id}/subCategories`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
             }
         })
@@ -39,24 +49,17 @@ const Categories = (props)=>{
         tableHeaders:['Photo','Name','Actions','More Details']
     }
     useEffect(() => {
-        setloaded(true)
+        toggleProgress()
         axios.get('http://localhost:3000/api/v1/category', {
             headers: {
                 'Authorization': localStorage.getItem('token')
             }
         }).then((res) => {
-            const data = res.data.categories.map(ele => {
-                return {
-                    ...ele,
-                    actions: <CategoryForm mode='Edit' handleEdit={handleEdit} data={ele}/>,
-                    moreDetails: <Button color="primary" onClick={()=> navigate(`/${ele._id}/subCategories`)} startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view sub categories</Button>
-                }
-            })
-            setCategories(() => [...data])
-            setloaded(false)
+            setData(res.data.categories)
+            toggleProgress()
         })
     }, [])
-    return <StickyHeadTable info={info} data={categories} addFormContent={<CategoryForm handleAdd={handleAdd} mode="Add" />} loaded={loaded}/>
+    return <StickyHeadTable info={info} data={categories} progress={progress} addFormContent={<CategoryForm addElement={addElement} toggleProgress={toggleProgress} mode="Add" />} />
 }
 
 export default Categories

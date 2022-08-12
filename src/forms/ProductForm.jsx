@@ -1,246 +1,205 @@
-import { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
-import { styled } from '@material-ui/core/styles';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import TextField from '@material-ui/core/TextField';
-import TextArea from 'antd/lib/input/TextArea';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import axios from 'axios';
-import {NotificationContext} from '../App'
+import { useContext, useState } from "react";
+import { Form, Input, Button, Modal, Select, InputNumber } from "antd";
+import { EditOutlined, PlusOutlined, PercentageOutlined } from '@ant-design/icons'
+import { NotificationContext } from "../App";
 import ImageUploadForm from "./ImageUploadForm";
-import useToggle from '../customHooks/useToggle';
+import axios from 'axios'
+import useToggle from "../customHooks/useToggle";
+import { useEffect } from "react";
 
-
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-    '& .MuiDialogContent-root': {
-        padding: theme.spacing(2),
-    },
-    '& .MuiDialogActions-root': {
-        padding: theme.spacing(1),
-    },
-}));
-
-const MyTextField = styled(TextField)(({ theme }) => ({
-    width: '100%',
-    margin: '5px 0 5px 0'
-}));
-
-const MyFormControl = styled(FormControl)(({ theme }) => ({
-    width: '100%',
-    margin: '5px 0 5px 0'
-}));
-
-const BootstrapDialogTitle = (props) => {
-    const { children, onClose, ...other } = props;
-    return (
-        <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-            {children}
-            {onClose ? (
-                <IconButton
-                    aria-label="close"
-                    onClick={onClose}
-                    style={{
-                        position: 'absolute',
-                        right: 8,
-                        top: 8,
-                        color: (theme) => theme.palette.grey[500],
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
-            ) : null}
-        </DialogTitle>
-    );
-};
-
-BootstrapDialogTitle.propTypes = {
-    children: PropTypes.node,
-    onClose: PropTypes.func.isRequired,
-};
+const { Option } = Select
 
 export default function ProductForm(props) {
-    const [open, toggleOpen] = useToggle(false);
-    const [imageSource,setImageSource] = useState(props.data?.photo)
-    const [name, setName] = useState(props.data?.name)
-    const [description, setDescription] = useState(props.data?.description)
-    const [stock, setStock] = useState(props.data?.stock)
-    const [price, setPrice] = useState(props.data?.price)
+    const [modalVisable, toggleModal] = useToggle(false)
+    const { handleNotification } = useContext(NotificationContext);
+    const [imageSource, setImageSource] = useState(props.data?.photo)
     const [specOption, setSpecOption] = useState([])
     const [specs, setSpecs] = useState([])
     const [finalSpecs, setFinalSpecs] = useState([])
-    const [touchedName, toggleTouchedName] = useToggle(false)
-    const [touchedDescription, toggleTouchedDescription] = useToggle(false)
-    const [touchedStock, toggleTouchedStock] = useToggle(false)
-    const [touchedPrice, toggleTouchedPrice] = useToggle(false)
-    const {handleNotification} = useContext(NotificationContext);
-    
-    const handleOptionChange = (event, spec, index) => {
+
+    const handleImageChange = (childData) => {
+        setImageSource(childData);
+    };
+
+    const handleOptionChange = (value, spec, index) => {
         const newOptions = [...specOption]
-        newOptions[index] = event.target.value
+        newOptions[index] = value
         setSpecOption(() => [...newOptions])
-        if(finalSpecs.some(ele=>ele.name === spec)){
+        if (finalSpecs.some(ele => ele.name === spec)) {
             console.log()
-            setFinalSpecs((oldSpecs) => oldSpecs.map(ele=>{
-                if(ele.name === spec) return { name: spec, value: event.target.value }
+            setFinalSpecs((oldSpecs) => oldSpecs.map(ele => {
+                if (ele.name === spec) return { name: spec, value }
                 return ele
             }))
-        }else {
-            setFinalSpecs((oldSpecs) => [...oldSpecs, { name: spec, value: event.target.value }])
+        } else {
+            setFinalSpecs((oldSpecs) => [...oldSpecs, { name: spec, value }])
         }
     }
 
-    const handleClickOpen = () => {
-        toggleOpen(true);
-        setName(props.data?.name)
-        setSpecs(props.model.specs)
-        setDescription(props.data?.description)
-        setImageSource(props.data?.photo)
-        setStock(props.data?.stock)
-        setPrice(props.data?.price)
-    };
-    const handleClose = () => {
-        toggleOpen(false);
-        toggleTouchedName(false)
-        toggleTouchedDescription(false)
-        toggleTouchedStock(false)
-        toggleTouchedPrice(false)
-        setName('')
-        setDescription('')
-        setImageSource('')
-        setStock('')
-        setPrice('')
-        setSpecs([])
-        setFinalSpecs([])
-        setSpecOption([])
-    };
+    const handleOpen = () => {
+        productForm.setFieldsValue({ name: props.data?.name || '' })
+    }
 
-    const handleSubmit = () => {
+    const handleOk = () => {
+        productForm.submit()
+    }
+
+    const handleCancel = () => {
+        toggleModal()
+    }
+
+    const onFinish = (values) => {
+        props.toggleProgress()
         if (props.mode === 'Add') {
-            let addData = { photo:imageSource, name,description, stock, price, category: props.model.category, subCategory: props.model.subCategory, specs: finalSpecs, model:props.model._id }
-            console.log(addData)
+            let addData = { ...values,photo: imageSource, category: props.model.category, subCategory: props.model.subCategory, specs: finalSpecs, model: props.model._id }
             axios.post('http://localhost:3000/api/v1/product/add', addData, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
             }).then(res => {
-                console.log(res)
-                axios.get('http://localhost:3000/api/v1/product', {
-                    headers: {
-                        'Authorization': localStorage.getItem('token')
-                    }
-                }).then(res => {
-                    props.handleAdd(res.data.products)
-                    handleNotification('success', "Product Added Successfully")
-                })
+                props.addElement(res.data.product)
+                handleNotification('success', "Product Added Successfully")
+                props.toggleProgress()
+            }).catch((error) => {
+                handleNotification('error', "Server Error")
             })
         } else {
-            let editData = { name, description, stock, price   }
+            let editData = { ...values }
             axios.put(`http://localhost:3000/api/v1/product/update/${props.data?._id}`, editData, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
             }).then(res => {
-                axios.get('http://localhost:3000/api/v1/product', {
-                    headers: {
-                        'Authorization': localStorage.getItem('token')
-                    }
-                }).then(res => {
-                    props.handleEdit(res.data.products)
-                    handleNotification('success', "Product Updated Successfully")
-                })
+                props.editElement(res.data.product)
+                handleNotification('success', "Product Updated Successfully")
+                props.toggleProgress()
+            }).catch((error) => {
+                handleNotification('error', "Server Error")
             })
         }
-
-        toggleTouchedName(false)
-        toggleTouchedDescription(false)
-        toggleTouchedStock(false)
-        toggleTouchedPrice(false)
-        setName('')
-        setDescription('')
-        setImageSource('')
-        setStock('')
-        setPrice('')
-        setSpecs([])
-        setFinalSpecs([])
+        toggleModal()
+    };
+    useEffect(() => {
+        productForm.resetFields()
+        productForm.setFieldsValue({
+            name: props.data?.name || '',
+            stock: props.data?.stock || '',
+            price: props.data?.price || '',
+            discount: props.data?.discount || '',
+            description: props.data?.description || '',
+        })
+        setImageSource(props.data?.photo || '')
+        setSpecs(props.model?.specs || [])
         setSpecOption([])
-        toggleOpen(false);
-    }
+    }, [modalVisable])
+    const [productForm] = Form.useForm();
 
-    const handleImageChange = (childData)=>{
-        setImageSource(childData)
-    }
-    
     return (
-        <div>
+        <>
             {props.mode === 'Add' ? <Button
-                onClick={handleClickOpen}
-                color="primary"
-                startIcon={<AddIcon />}
+                onClick={toggleModal}
+                icon={<PlusOutlined />}
+                className="no-background-button"
             >
                 Add new Product
-            </Button> : <IconButton aria-label="edit" onClick={handleClickOpen}><EditIcon /></IconButton>}
-            <BootstrapDialog
-                onClose={handleClose}
-                maxWidth="xs"
-                aria-labelledby="customized-dialog-title"
-                open={open}
-            >
-                <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    {`${props.mode} Product`}
-                </BootstrapDialogTitle>
-                <DialogContent dividers>
-                {props.mode !== 'Edit' &&<ImageUploadForm photo={imageSource} setImage={handleImageChange}/>}
-
-                    <MyTextField required helperText={!name && touchedName ? 'required' : ''} error={!name && touchedName ? true : false} variant="outlined" id="name" name="name" onChange={e => {
-                        setName(e.target.value)
-                        toggleTouchedName(true)
-                    }} label="Name" placeholder='Name' defaultValue={name} />
-
-                    <MyTextField required helperText={!stock && touchedStock ? 'required' : ''} error={!stock && touchedStock ? true : false} variant="outlined" id="stock" type='number' name="stock" onChange={e => {
-                        setStock(e.target.value)
-                        toggleTouchedStock(true)
-                    }} label="Stock" placeholder='Stock' defaultValue={stock} />
-
-                    <MyTextField required helperText={!price && touchedPrice ? 'required' : ''} error={!price && touchedPrice ? true : false} variant="outlined" id="price" type='number' name="price" onChange={e => {
-                        setPrice(e.target.value)
-                        toggleTouchedPrice(true)
-                    }} label="Price" placeholder='Price' defaultValue={price} />
-
-                    <TextArea status={!description && touchedDescription?'error':''} variant="outlined" id="description" name="description" onChange={e => {
-                        setDescription(e.target.value)
-                        toggleTouchedDescription(true)
-                    }} label="Description" placeholder={!description && touchedDescription?'required':'Description'} defaultValue={description} />
-
-                    {specs.length !== 0 && props.mode === 'Add' ? specs.map((spec, index) => (<MyFormControl key={spec._id} variant="outlined" required size="small">
-                        <InputLabel id="demo-select-small">{spec.name}</InputLabel>
-                        <Select
-                            labelId="demo-select-small"
-                            id="demo-select-small"
-                            value={specOption[index] || ''}
-                            label={spec.name}
-                            onChange={(event) => handleOptionChange(event, spec.name, index)}
+            </Button> : <Button className="no-background-button" icon={<EditOutlined />} aria-label="edit" onClick={toggleModal}></Button>}
+            <Modal title={props.mode === 'Add' ?"Add new Product":"Edit product details"} visible={modalVisable} onOk={handleOk} okText={props.mode === 'Add' ? 'Add' : 'Save Changes'} onCancel={handleCancel} onOpen={handleOpen}>
+                <Form
+                    form={productForm}
+                    wrapperCol={{
+                        span: 24,
+                    }}
+                    initialValues={{
+                        remember: true,
+                    }}
+                    onFinish={onFinish}
+                    autoComplete="off"
+                >
+                    <div className="fields-container">
+                        {props.mode === "Add" &&<ImageUploadForm photo={imageSource} setImage={handleImageChange} />}
+                        <Form.Item
+                            name="name"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
                         >
-                            {spec.options.map((option, index) => (<MenuItem style={{backgroundColor: spec.name === 'color' && option, textShadow:'1px 0 7px grey'}} key={index} value={option}>{option}</MenuItem>))}
-                        </Select>
-                    </MyFormControl>)) : ''}
-                </DialogContent>
-                <DialogActions>
-                    <Button color="primary" disabled={!name || !imageSource || !stock || !price || (( specOption.length !== specs.length) && props.mode !== 'Edit') ? true : false} onClick={handleSubmit}>
-                        {props.mode === 'Add' ? 'Add' : 'Save changes'}
-                    </Button>
-                </DialogActions>
-            </BootstrapDialog>
-        </div>
+                            <Input placeholder="Name" allowClear />
+                        </Form.Item>
+                        <Form.Item
+                            name="stock"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                                {
+                                    pattern: /^[0-9]+$/,
+                                    message: 'Must be only numbers'
+                                },
+                                {
+                                    min: 1,
+                                }
+                            ]}
+                        >
+                            <Input className="defualt-input" placeholder="Stock" />
+                        </Form.Item>
+                        <Form.Item
+                            name="price"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                                {
+                                    pattern: /^[0-9]+$/,
+                                    message: 'Must be only numbers'
+                                },
+                                {
+                                    min: 1,
+                                }
+                            ]}
+                        >
+                            <Input className="defualt-input" placeholder="Price" />
+                        </Form.Item>
+                        <Form.Item
+                            name="discountPercentage"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                                {
+                                    pattern: /^[0-9]+$/,
+                                    message: 'Must be only numbers'
+                                },
+                                {
+                                    min: 0,
+                                }
+                            ]}
+                        >
+                            <Input className="defualt-input" placeholder="Discount" prefix={<PercentageOutlined />}/>
+                        </Form.Item>
+                        <Form.Item
+                            name="description"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Input.TextArea placeholder="Description" allowClear />
+                        </Form.Item>
+                        {specs.length !== 0 && props.mode === 'Add' ? specs.map((spec, index) => (<Form.Item key={spec._id} name={spec.name} rules={[{ required: true }]} size="small">
+                            <Select
+                                value={specOption[index] || ''}
+                                placeholder={spec.name}
+                                onChange={(value) => handleOptionChange(value, spec.name, index)}
+                            >
+                                {spec.options.map((option, index) => (<Option style={{ backgroundColor: spec.name === 'color' && option, textShadow: '1px 0 7px grey' }} key={index} value={option}>{option}</Option>))}
+                            </Select>
+                        </Form.Item>)) : ''}
+                    </div>
+                </Form>
+            </Modal>
+        </>
     );
 }

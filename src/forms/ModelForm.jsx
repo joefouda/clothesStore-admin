@@ -22,7 +22,6 @@ import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
 import SpecForm from './SpecForm'
 import useToggle from '../customHooks/useToggle';
-import { DispatchModelsContext } from '../contexts/ModelsContext';
 import { NotificationContext } from '../App';
 import { useContext } from 'react';
 import axios from 'axios'
@@ -70,8 +69,8 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function ModelForm(props) {
+    console.log(props)
     const { handleNotification } = useContext(NotificationContext);
-    const dispatchModels = useContext(DispatchModelsContext)
     const [open, toggleOpen] = useToggle(false);
     const [name, setName] = useState(props.data?.name)
     const [specs, setSpecs] = useState(props.data?.specs || [{name: 'color', options:[]}])
@@ -106,26 +105,32 @@ export default function ModelForm(props) {
         setSpecs((oldSpecs) => oldSpecs.filter((spec, oldIndex) => index !== oldIndex))
     }
     const handleSubmit = () => {
-        let data = { name, specs, subCategory: props.subCategoryID, category: props.categoryID }
+        props.toggleProgress()
         if (props.mode === 'Add') {
+            let data = { name, specs, subCategory: props.subCategoryID, category: props.categoryID }
             axios.post('http://localhost:3000/api/v1/model', data, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
             }).then(res => {
-                dispatchModels({ type: 'ADD', model: res.data.model })
+                props.addElement(res.data.model)
                 handleNotification('success', "Model Added Successfully")
+                props.toggleProgress()
+            }).catch(error => {
+                handleNotification('error', "Server Error")
             })
         } else {
+            let data = { name, specs}
             axios.put(`http://localhost:3000/api/v1/model/${props.data._id}`, data, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
             }).then(res => {
-                dispatchModels({ type: 'UPDATE', model: res.data.model })
+                props.editElement(res.data.model)
                 handleNotification('success', "Model Updated Successfully")
+                props.toggleProgress()
             }).catch(error => {
-                console.log(error)
+                handleNotification('error', "Server Error")
             })
         }
 
@@ -194,3 +199,5 @@ export default function ModelForm(props) {
         </div>
     );
 }
+
+
