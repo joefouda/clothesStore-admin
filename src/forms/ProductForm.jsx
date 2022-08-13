@@ -57,6 +57,7 @@ export default function ProductForm(props) {
                     'Authorization': localStorage.getItem('token')
                 }
             }).then(res => {
+                console.log(res)
                 props.addElement(res.data.product)
                 handleNotification('success', "Product Added Successfully")
                 props.toggleProgress()

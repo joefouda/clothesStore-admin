@@ -69,7 +69,6 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function ModelForm(props) {
-    console.log(props)
     const { handleNotification } = useContext(NotificationContext);
     const [open, toggleOpen] = useToggle(false);
     const [name, setName] = useState(props.data?.name)
