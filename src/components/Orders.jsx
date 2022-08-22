@@ -1,10 +1,12 @@
 import axios from 'axios'
-import StickyHeadTable from '../shared/MainTable'
-import { useEffect, useState } from 'react'
+import MainTable from '../shared/MainTable/MainTable'
+import { useEffect, useState, useContext } from 'react'
 import OrderStateForm from '../forms/OrderStateForm' 
 import useToggle from '../customHooks/useToggle'
+import { NotificationContext } from '../App'
 
 const Orders = () => {
+    const { handleNotification } = useContext(NotificationContext)
     const [orders, setOrders] = useState([])
     const [progress, toggleProgress] = useToggle(false)
     
@@ -35,11 +37,15 @@ const Orders = () => {
                 'Authorization': localStorage.getItem('token')
             }
         }).then((res) => {
+            console.log(res)
             setData(res.data.orders)
             toggleProgress()
+        }).catch(error=> {
+            console.log(error)
+            handleNotification('error', 'Server Error')
         })
     }, [])
-    return <StickyHeadTable info={info} data={orders} progress={progress} />
+    return <MainTable info={info} data={orders} progress={progress} />
 }
 
 export default Orders

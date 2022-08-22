@@ -43,7 +43,7 @@ const ProductPhotosControl = ()=> {
     return (
         <div className="product-photos-control-container">
             {progress?<CircularProgress className='circular-progress' />:photos.map((photo)=>(<div key={photo.id} className="product-image-card">
-                <Image width='15vw' src={photo.src}/>
+                <Image width='15vw' preview={{ getContainer: '#root', zIndex: 1000000 }} src={photo.src}/>
                 <div className="product-image-card-actions">
                     <Button onClick={()=> handleRemove(photo.id)}>remove</Button>
                 </div>

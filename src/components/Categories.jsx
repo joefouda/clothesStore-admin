@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
-import StickyHeadTable from '../shared/MainTable'
+import MainTable from '../shared/MainTable/MainTable'
 import CategoryForm from '../forms/CategoryForm'
 import Button from '@material-ui/core/Button';
 import VisibilityIcon from '@material-ui/icons/Visibility';
@@ -59,7 +59,7 @@ const Categories = ()=>{
             toggleProgress()
         })
     }, [])
-    return <StickyHeadTable info={info} data={categories} progress={progress} addFormContent={<CategoryForm addElement={addElement} toggleProgress={toggleProgress} mode="Add" />} />
+    return <MainTable info={info} data={categories} progress={progress} addFormContent={<CategoryForm addElement={addElement} toggleProgress={toggleProgress} mode="Add" />} />
 }
 
 export default Categories

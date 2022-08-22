@@ -10,7 +10,6 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
 import TextField from '@material-ui/core/TextField';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -20,11 +19,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
-import SpecForm from './SpecForm'
+import VariantForm from './VariantForm'
 import useToggle from '../customHooks/useToggle';
 import { NotificationContext } from '../App';
 import { useContext } from 'react';
 import axios from 'axios'
+import { useEffect } from 'react';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -72,41 +72,27 @@ export default function ModelForm(props) {
     const { handleNotification } = useContext(NotificationContext);
     const [open, toggleOpen] = useToggle(false);
     const [name, setName] = useState(props.data?.name)
-    const [specs, setSpecs] = useState(props.data?.specs || [{name: 'color', options:[]}])
-    const [touchedName, toggleTouchedName] = useToggle(false)
+    const [variants, setVariants] = useState(props.data?.variants || {colors: [], sizes: []})
 
     const handleClickOpen = () => {
         toggleOpen(true);
         setName(props.data?.name)
-        setSpecs(props.data?.specs || [{name: 'color', options:[]}])
+        setVariants(props.data?.variants || {colors: [], sizes: []})
     };
     const handleClose = () => {
         toggleOpen(false);
-        toggleTouchedName(false)
         setName('')
-        setSpecs([])
+        setVariants({})
     };
 
-    const handleAddSpec = (newSpec) => {
-        setSpecs((oldSpecs) => [...oldSpecs, newSpec])
+    const handleEditVariant = (key, newValue) => {
+        setVariants((oldVariants) => ({...oldVariants, [key]:newValue}))
     }
 
-    const handleEditSpec = (editedSpec, index) => {
-        setSpecs((oldSpecs) => oldSpecs.map((oldSpec, oldIndex) => {
-            if (oldIndex === index) {
-                return editedSpec
-            }
-            return oldSpec
-        }))
-    }
-
-    const handleDeleteSpec = (index) => {
-        setSpecs((oldSpecs) => oldSpecs.filter((spec, oldIndex) => index !== oldIndex))
-    }
     const handleSubmit = () => {
         props.toggleProgress()
         if (props.mode === 'Add') {
-            let data = { name, specs, subCategory: props.subCategoryID, category: props.categoryID }
+            let data = { name, variants, subCategory: props.subCategoryID, category: props.categoryID }
             axios.post('http://localhost:3000/api/v1/model', data, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -119,7 +105,7 @@ export default function ModelForm(props) {
                 handleNotification('error', "Server Error")
             })
         } else {
-            let data = { name, specs}
+            let data = { name, variants}
             axios.put(`http://localhost:3000/api/v1/model/${props.data._id}`, data, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -133,9 +119,8 @@ export default function ModelForm(props) {
             })
         }
 
-        toggleTouchedName(false)
         setName('')
-        setSpecs([])
+        setVariants([])
         toggleOpen(false);
     }
     return (
@@ -157,11 +142,10 @@ export default function ModelForm(props) {
                     {`${props.mode} Model`}
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
-                    <MyTextField required helperText={!name && touchedName ? 'required' : ''} error={!name && touchedName ? true : false} variant="outlined" id="name" name="name" onChange={e => {
+                    <MyTextField required variant="outlined" id="name" name="name" onChange={e => {
                         setName(e.target.value)
-                        toggleTouchedName(true)
                     }} label="Name" placeholder='Name' defaultValue={name} />
-                    {specs.length !== 0 ? <TableContainer component={Paper}>
+                    <TableContainer component={Paper}>
                         <Table aria-label="caption table">
                             <TableHead>
                                 <TableRow>
@@ -171,26 +155,23 @@ export default function ModelForm(props) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {specs.map((spec, index) => (
+                                {Object.keys(variants).map((variantkey, index) => (
                                     <TableRow key={index}>
                                         <TableCell component="th" scope="row">
-                                            {spec.name}
+                                            {variantkey}
                                         </TableCell>
-                                        <TableCell>{spec.options.map((option, index) => <Chip style={{backgroundColor:spec.name === 'color' && option, minWidth:'3vw'}} label={spec.name === 'color'?'': option} key={index} />)}</TableCell>
+                                        <TableCell>{variants[variantkey].map((option, index) => <Chip style={{backgroundColor:variantkey === 'colors' && option, minWidth:'3vw'}} label={variantkey === 'colors'?'': option} key={index} />)}</TableCell>
                                         <TableCell style={{ display: 'flex' }}>
-                                            <SpecForm mode={'Edit'} spec={spec} handleEditSpec={handleEditSpec} index={index} />
-                                            <IconButton aria-label="delete" onClick={() => handleDeleteSpec(index)}><DeleteIcon /></IconButton>
+                                            <VariantForm name={variantkey} options={variants[variantkey]} handleEditVariant={handleEditVariant} />
                                         </TableCell>
-
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
-                    </TableContainer> : ''}
-                    <SpecForm mode={'Add'} handleAddSpec={handleAddSpec} />
+                    </TableContainer>
                 </DialogContent>
                 <DialogActions>
-                    <Button color="primary" disabled={!name || specs.length === 0 ? true : false} onClick={handleSubmit}>
+                    <Button color="primary" disabled={!name ? true : false} onClick={handleSubmit}>
                         {props.mode === 'Add' ? 'Add' : 'Save changes'}
                     </Button>
                 </DialogActions>

@@ -77,7 +77,7 @@ const MainSliderControl = () => {
                         }
                     >
                     </Empty> : webPhotos.map((photo) => (<div key={photo.id} className="image-card">
-                        <Image width='15vw' src={photo.src} />
+                        <Image width='15vw' preview={{ getContainer: '#root', zIndex: 1000000 }} src={photo.src} />
                         <div className="image-card-actions">
                             <Button onClick={() => handleWebRemove(photo.id)}>remove</Button>
                         </div>
@@ -97,7 +97,7 @@ const MainSliderControl = () => {
                         }
                     >
                     </Empty> : mobilePhotos.map((photo) => (<div key={photo.id} className="image-card">
-                        <Image width='15vw' src={photo.src} />
+                        <Image width='15vw' preview={{ getContainer: '#root', zIndex: 1000000 }} src={photo.src} />
                         <div className="image-card-actions">
                             <Button onClick={() => handleMobileRemove(photo.id)}>remove</Button>
                         </div>

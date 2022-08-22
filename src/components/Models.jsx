@@ -1,4 +1,4 @@
-import StickyHeadTable from '../shared/MainTable'
+import MainTable from '../shared/MainTable/MainTable'
 import ModelForm from '../forms/ModelForm';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -30,13 +30,14 @@ const SubCategories = () => {
     const params = useParams()
 
     const addElement = (newModel) => {
+      let keys = Object.keys(newModel.variants)
         let newEle = {
           ...newModel,
-          specs: newModel.specs.map((spec, index) => (
-            <BootstrapTooltip key={index} title={spec.options.map((ele, index) => index === spec.options.length - 1 ? ele : `${ele} - `)}>
+          variants: keys.map((variantkey, index) => (
+            <BootstrapTooltip key={index} title={newModel.variants[variantkey].map((ele, index) => index === newModel.variants[variantkey].length - 1 ? ele : `${ele} - `)}>
               <Chip
                 color='primary'
-                label={spec.name}
+                label={variantkey}
               />
             </BootstrapTooltip>
           )),
@@ -47,13 +48,14 @@ const SubCategories = () => {
       }
 
       const editElement = (editedModel) => {
+        let keys = Object.keys(editedModel.variants)
         let editedEle = {
           ...editedModel,
-          specs: editedModel.specs.map((spec, index) => (
-            <BootstrapTooltip key={index} title={spec.options.map((ele, index) => index === spec.options.length - 1 ? ele : `${ele} - `)}>
+          variants: keys.map((variantkey, index) => (
+            <BootstrapTooltip key={index} title={editedModel.variants[variantkey].map((ele, index) => index === editedModel.variants[variantkey].length - 1 ? ele : `${ele} - `)}>
               <Chip
                 color='primary'
-                label={spec.name}
+                label={variantkey}
               />
             </BootstrapTooltip>
           )),
@@ -66,19 +68,20 @@ const SubCategories = () => {
       }
 
     const setData = (modelsData) => {
-        const data = modelsData.map(ele => {
+      const data = modelsData.map(model => {
+          let keys = Object.keys(model.variants)
           return {
-            ...ele,
-            specs: ele.specs.map((spec, index) => (
-              <BootstrapTooltip key={index} title={spec.options.map((ele, index) => index === spec.options.length - 1 ? ele : `${ele} - `)}>
+            ...model,
+            variants: keys.map((variantkey, index) => (
+              <BootstrapTooltip key={index} title={model.variants[variantkey].map((ele, index) => index === model.variants[variantkey].length - 1 ? ele : `${ele} - `)}>
                 <Chip
                   color='primary'
-                  label={spec.name}
+                  label={variantkey}
                 />
               </BootstrapTooltip>
             )),
-            actions: <ModelForm data={ele} mode={'Edit'} editElement={editElement} toggleProgress={toggleProgress}/>,
-            moreDetails: <Link to={`/${ele._id}/products`}><Button type='primary' startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view products</Button></Link>,
+            actions: <ModelForm data={model} mode={'Edit'} editElement={editElement} toggleProgress={toggleProgress}/>,
+            moreDetails: <Link to={`/${model._id}/products`}><Button type='primary' startIcon={<VisibilityIcon style={{ fontSize: '1em' }} />}>view products</Button></Link>,
           }
         })
         setModels(data)
@@ -87,19 +90,19 @@ const SubCategories = () => {
     const info = {
         header: 'Models',
         dataFor: 'Models',
-        tableHeaders: ['Name', 'Specs', 'Actions', 'More Details']
+        tableHeaders: ['Name', 'Variants', 'Actions', 'More Details']
     }
     
     useEffect(()=> {
-        axios.get(`http://localhost:3000/api/v1/subCategory/${params.subCategoryID}`,{
+        axios.get(`http://localhost:3000/api/v1/model/subCategory/${params.subCategoryID}`,{
             headers: {
                 'Authorization': localStorage.getItem('token')
             }
         }).then(res=>{
-            setData(res.data.subCategory.models)
+            setData(res.data.models)
         })
     }, [])
-    return <StickyHeadTable info={info} data={models} progress={progress} addFormContent={<ModelForm {...params} mode="Add" addElement={addElement} toggleProgress={toggleProgress} />} />
+    return <MainTable info={info} data={models} progress={progress} addFormContent={<ModelForm {...params} mode="Add" addElement={addElement} toggleProgress={toggleProgress} />} />
 }
 
 export default SubCategories

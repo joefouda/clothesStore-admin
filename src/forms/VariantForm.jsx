@@ -59,10 +59,9 @@ BootstrapDialogTitle.propTypes = {
 
 export default function SpecForm(props) {
     const [open, toggleOpen] = useToggle(false);
-    const [name, setName] = useState(props.spec?.name);
+    const [name, setName] = useState(props?.name);
     const [option, setOption] = useState("");
-    const [options, setOptions] = useState(props.spec?.options || []);
-    const [touchedName, toggleTouchedName] = useToggle(false);
+    const [options, setOptions] = useState(props?.options || []);
 
     const handleDelete = (optionToDelete) => () => {
         setOptions((options) =>
@@ -72,12 +71,11 @@ export default function SpecForm(props) {
 
     const handleClickOpen = () => {
         toggleOpen(true);
-        setName(props.spec?.name);
-        setOptions(props.spec?.options || []);
+        setName(props?.name);
+        setOptions(props?.options || []);
     };
     const handleClose = () => {
         toggleOpen(false);
-        toggleTouchedName(false);
         setName("");
         setOptions([]);
         setOption("");
@@ -89,13 +87,7 @@ export default function SpecForm(props) {
     };
 
     const handleSubmit = () => {
-        let data = { name, options };
-        if (props.mode === "Add") {
-            props.handleAddSpec(data);
-        } else {
-            props.handleEditSpec(data, props.index);
-        }
-        toggleTouchedName(false);
+        props.handleEditVariant(name, options);
         setName("");
         setOptions([]);
         setOption("");
@@ -104,19 +96,9 @@ export default function SpecForm(props) {
 
     return (
         <div>
-            {props.mode === "Add" ? (
-                <Button
-                    onClick={handleClickOpen}
-                    color="primary"
-                    startIcon={<AddIcon />}
-                >
-                    Add new Spec
-                </Button>
-            ) : (
-                <IconButton aria-label="edit" onClick={handleClickOpen}>
-                    <EditIcon />
-                </IconButton>
-            )}
+            <IconButton aria-label="edit" onClick={handleClickOpen}>
+                <EditIcon />
+            </IconButton>
             <BootstrapDialog
                 onClose={handleClose}
                 maxWidth="xs"
@@ -131,22 +113,18 @@ export default function SpecForm(props) {
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
                     <MyTextField
-                        required
-                        helperText={!name && touchedName ? "required" : ""}
-                        error={!name && touchedName ? true : false}
                         variant="outlined"
-                        id="name"
-                        name="name"
+                        id={name}
+                        name={name}
                         onChange={(e) => {
                             setName(e.target.value);
-                            toggleTouchedName(true);
                         }}
                         label="Name"
                         placeholder="Name"
                         value={name}
                     />
 
-                    {name === "color" ? (
+                    {name === "colors" ? (
                         <MyTextField
                             id="option"
                             name="option"
@@ -181,11 +159,11 @@ export default function SpecForm(props) {
                             {options.map((option, index) => (
                                 <Chip
                                     style={{
-                                        backgroundColor: name === "color" && option,
+                                        backgroundColor: name === "colors" && option,
                                         minWidth: "3vw",
                                         boxShadow: "1px 0px 7px grey",
                                     }}
-                                    label={name === "color" ? "" : option}
+                                    label={name === "colors" ? "" : option}
                                     key={index}
                                     onDelete={handleDelete(option)}
                                 />

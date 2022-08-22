@@ -13,31 +13,19 @@ export default function ProductForm(props) {
     const [modalVisable, toggleModal] = useToggle(false)
     const { handleNotification } = useContext(NotificationContext);
     const [imageSource, setImageSource] = useState(props.data?.photo)
-    const [specOption, setSpecOption] = useState([])
-    const [specs, setSpecs] = useState([])
-    const [finalSpecs, setFinalSpecs] = useState([])
+    const [variantOption, setVariantOption] = useState([])
+    const [variants, setVariants] = useState(props.model?.variants || {})
+    const [finalVariants, setFinalVariants] = useState({})
 
     const handleImageChange = (childData) => {
         setImageSource(childData);
     };
 
-    const handleOptionChange = (value, spec, index) => {
-        const newOptions = [...specOption]
+    const handleOptionChange = (value, key, index) => {
+        const newOptions = [...variantOption]
         newOptions[index] = value
-        setSpecOption(() => [...newOptions])
-        if (finalSpecs.some(ele => ele.name === spec)) {
-            console.log()
-            setFinalSpecs((oldSpecs) => oldSpecs.map(ele => {
-                if (ele.name === spec) return { name: spec, value }
-                return ele
-            }))
-        } else {
-            setFinalSpecs((oldSpecs) => [...oldSpecs, { name: spec, value }])
-        }
-    }
-
-    const handleOpen = () => {
-        productForm.setFieldsValue({ name: props.data?.name || '' })
+        setVariantOption(() => [...newOptions])
+        setFinalVariants((oldvariants) => ({...oldvariants, [key]:value }))
     }
 
     const handleOk = () => {
@@ -51,13 +39,12 @@ export default function ProductForm(props) {
     const onFinish = (values) => {
         props.toggleProgress()
         if (props.mode === 'Add') {
-            let addData = { ...values,photo: imageSource, category: props.model.category, subCategory: props.model.subCategory, specs: finalSpecs, model: props.model._id }
+            let addData = { ...values,photo: imageSource, category: props.model.category, subCategory: props.model.subCategory, variants: finalVariants, model: props.model._id }
             axios.post('http://localhost:3000/api/v1/product/add', addData, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
             }).then(res => {
-                console.log(res)
                 props.addElement(res.data.product)
                 handleNotification('success', "Product Added Successfully")
                 props.toggleProgress()
@@ -84,14 +71,14 @@ export default function ProductForm(props) {
         productForm.resetFields()
         productForm.setFieldsValue({
             name: props.data?.name || '',
-            stock: props.data?.stock || '',
-            price: props.data?.price || '',
-            discount: props.data?.discount || '',
+            stock: props.data?.stock ? String(props.data.stock) : '',
+            price: props.data?.price ? String(props.data.price) : '',
+            discountPercentage: props.data?.discountPercentage ? String(props.data.discountPercentage) : '',
             description: props.data?.description || '',
         })
         setImageSource(props.data?.photo || '')
-        setSpecs(props.model?.specs || [])
-        setSpecOption([])
+        setVariants(props.model?.variants || [])
+        setVariantOption([])
     }, [modalVisable])
     const [productForm] = Form.useForm();
 
@@ -104,7 +91,7 @@ export default function ProductForm(props) {
             >
                 Add new Product
             </Button> : <Button className="no-background-button" icon={<EditOutlined />} aria-label="edit" onClick={toggleModal}></Button>}
-            <Modal title={props.mode === 'Add' ?"Add new Product":"Edit product details"} visible={modalVisable} onOk={handleOk} okText={props.mode === 'Add' ? 'Add' : 'Save Changes'} onCancel={handleCancel} onOpen={handleOpen}>
+            <Modal title={props.mode === 'Add' ?"Add new Product":"Edit product details"} visible={modalVisable} onOk={handleOk} okText={props.mode === 'Add' ? 'Add' : 'Save Changes'} onCancel={handleCancel}>
                 <Form
                     form={productForm}
                     wrapperCol={{
@@ -177,7 +164,7 @@ export default function ProductForm(props) {
                                 }
                             ]}
                         >
-                            <Input className="defualt-input" placeholder="Discount" prefix={<PercentageOutlined />}/>
+                            <Input className="defualt-input" placeholder="discount Percentage" prefix={<PercentageOutlined />}/>
                         </Form.Item>
                         <Form.Item
                             name="description"
@@ -189,13 +176,13 @@ export default function ProductForm(props) {
                         >
                             <Input.TextArea placeholder="Description" allowClear />
                         </Form.Item>
-                        {specs.length !== 0 && props.mode === 'Add' ? specs.map((spec, index) => (<Form.Item key={spec._id} name={spec.name} rules={[{ required: true }]} size="small">
+                        {props.mode === 'Add' ? Object.keys(variants).map((variantkey, index) => (<Form.Item key={index} name={variantkey.slice(0, -1)} rules={[{ required: true }]} size="small">
                             <Select
-                                value={specOption[index] || ''}
-                                placeholder={spec.name}
-                                onChange={(value) => handleOptionChange(value, spec.name, index)}
+                                value={variantOption[index] || ''}
+                                placeholder={variantkey.slice(0, -1)}
+                                onChange={(value) => handleOptionChange(value, variantkey.slice(0, -1), index)}
                             >
-                                {spec.options.map((option, index) => (<Option style={{ backgroundColor: spec.name === 'color' && option, textShadow: '1px 0 7px grey' }} key={index} value={option}>{option}</Option>))}
+                                {props.model.variants[variantkey].map((option, index) => (<Option style={{ backgroundColor: variantkey === 'colors' && option, textShadow: '1px 0 7px grey' }} key={index} value={option}>{option}</Option>))}
                             </Select>
                         </Form.Item>)) : ''}
                     </div>

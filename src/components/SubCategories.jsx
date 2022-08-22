@@ -1,4 +1,4 @@
-import StickyHeadTable from '../shared/MainTable'
+import MainTable from '../shared/MainTable/MainTable'
 import SubCategoryForm from '../forms/SubCategoryForm';
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
@@ -51,16 +51,16 @@ const SubCategories = () => {
     
     useEffect(()=> {
         toggleProgress()
-        axios.get(`http://localhost:3000/api/v1/category/${categoryID}`,{
+        axios.get(`http://localhost:3000/api/v1/subCategory/category/${categoryID}`,{
             headers: {
                 'Authorization': localStorage.getItem('token')
             }
         }).then(res=>{
-            setData(res.data.category.subCategories)
+            setData(res.data.subCategories)
             toggleProgress()
         })
     }, [])
-    return <StickyHeadTable info={info} data={subCategories} progress={progress} addFormContent={<SubCategoryForm categoryID={categoryID} toggleProgress={toggleProgress} addElement={addElement} mode="Add"/>} />
+    return <MainTable info={info} data={subCategories} progress={progress} addFormContent={<SubCategoryForm categoryID={categoryID} toggleProgress={toggleProgress} addElement={addElement} mode="Add"/>} />
 }
 
 export default SubCategories

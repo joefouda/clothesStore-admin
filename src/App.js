@@ -12,6 +12,7 @@ import ModelsPage from './pages/ModelsPage'
 import OrdersPage from './pages/OrdersPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
+import StatisticsPage from './pages/StatisticsPage';
 import MainSliderControlPage from './pages/MainSliderControlPage'
 import ProductPhotosControl from './components/Products/ProductPhotosControl/ProductPhotosControl'
 import MayRenderMainNav from './shared/MayRenderMainNav';
@@ -81,6 +82,9 @@ function App() {
                 </Route>
                 <Route exact path='/orders' element={<LogInGuard />}>
                   <Route path="/orders" element={<PersistentDrawerLeft><OrdersPage /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/statistics' element={<LogInGuard />}>
+                  <Route path="/statistics" element={<PersistentDrawerLeft><StatisticsPage /></PersistentDrawerLeft>} />
                 </Route>
                 <Route exact path='/mainSliderControl' element={<LogInGuard />}>
                   <Route path="/mainSliderControl" element={<PersistentDrawerLeft><MainSliderControlPage /></PersistentDrawerLeft>} />

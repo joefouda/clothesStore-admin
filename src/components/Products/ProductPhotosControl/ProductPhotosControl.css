@@ -20,7 +20,7 @@
 }
 
 .product-photos-control-container::-webkit-scrollbar-thumb {
-    background-color: rgb(27, 125, 252);
+    background-color: #6F42C1;
     /* color of the scroll thumb */
     border-radius: 20px;
     /* roundness of the scroll thumb */

@@ -1,3 +1,4 @@
+import './MainTable.css'
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -12,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import TableFooter from '@material-ui/core/TableFooter'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Image } from 'antd';
-import ImageSwiper from '../components/Products/ImageSwiper/ImageSwiper';
+import ImageSwiper from '../../components/Products/ImageSwiper/ImageSwiper';
 
 
 const useStyles = makeStyles({
@@ -20,7 +21,7 @@ const useStyles = makeStyles({
         width: '100%',
     },
     container: {
-        maxHeight: '70vh',
+        
     },
     progress: {
         position: 'absolute',
@@ -29,7 +30,7 @@ const useStyles = makeStyles({
     },
 });
 
-export default function StickyHeadTable(props) {
+export default function MainTable(props) {
     const [actionDisplay, setActionDisplay] = useState(false)
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
@@ -64,7 +65,7 @@ export default function StickyHeadTable(props) {
                 {props.info.header}
             </Typography>
             {props.progress ? <CircularProgress className='circular-progress' /> :<Paper className={classes.root}>
-                <TableContainer className={classes.container}>
+                <TableContainer className='table-container'>
                     <Table id="contain" stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>

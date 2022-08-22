@@ -27,7 +27,6 @@ export default function Login(props) {
             })
             .catch((error) => {
                 handleNotification("error", "Server Error");
-                toggleProgress();
             });
     };
     const [loginForm] = Form.useForm();
