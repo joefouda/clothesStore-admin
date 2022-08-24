@@ -7,7 +7,8 @@ const Home = () => {
   return (
     <Collapse>
       <Panel header="Home Page Control" key="1">
-        <Link to='/mainSliderControl'>Main slider Control</Link>
+        <Link to='/mainSliderControl'>Main slider Control</Link><br />
+        <Link to='/featuredProductsControl'>Featured Products Control</Link>
       </Panel>
     </Collapse>
   );

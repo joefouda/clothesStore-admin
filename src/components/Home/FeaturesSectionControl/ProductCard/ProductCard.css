@@ -1,0 +1,15 @@
+.image-card {
+    padding:10px;
+    display: flex;
+    justify-content: space-between;
+    transition: box-shadow 0.2s;
+}
+
+.image-card:hover {
+    box-shadow: 1px 0 7px black;
+}
+
+
+.image-card-actions {
+    align-self: center;
+}
