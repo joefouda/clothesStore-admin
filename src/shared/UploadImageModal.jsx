@@ -1,8 +1,8 @@
 import { Modal } from 'antd';
 import React, { useState, useContext } from 'react';
 import ImageUploadForm from '../forms/ImageUploadForm'
-import Button from '@material-ui/core/Button';
-import AddIcon from '@material-ui/icons/Add';
+import { Button } from 'antd'
+import { EditOutlined } from '@ant-design/icons';
 import axios from 'axios'
 import { NotificationContext } from '../App'
 
@@ -42,14 +42,13 @@ const UploadImageModal = (props) => {
           'Authorization': localStorage.getItem('token')
         }
       }).then(res => {
-        console.log(res)
         props.setPhotos(res.data.mainSlider.photos)
         handleNotification('success', 'photo added successfully')
         props.toggleWebProgress()
       }).catch(error => {
         handleNotification('error', 'Server Error')
       })
-    } else {
+    } else if(props.mode === 'mobile') {
       props.toggleMobileProgress()
       axios.put(props.url, { photo: imageSource }, {
         headers: {
@@ -59,6 +58,17 @@ const UploadImageModal = (props) => {
         props.setPhotos(res.data.mainSlider.photos)
         handleNotification('success', 'photo added successfully')
         props.toggleMobileProgress()
+      }).catch(error => {
+        handleNotification('error', 'Server Error')
+      })
+    } else {
+      axios.put(props.url, { photo: imageSource, title:props.title }, {
+        headers: {
+          'Authorization': localStorage.getItem('token')
+        }
+      }).then(res => {
+        props.setMainLists(res.data.result.MainLists)
+        handleNotification('success', 'photo edited successfully')
       }).catch(error => {
         handleNotification('error', 'Server Error')
       })
@@ -73,10 +83,10 @@ const UploadImageModal = (props) => {
 
   return (
     <>
-      <Button color="primary" startIcon={<AddIcon />} onClick={showModal}>
+      {props.mode === 'mainList' ?<Button className="no-background-button" icon={<EditOutlined />} aria-label="edit" onClick={showModal}></Button>:<Button color="primary" icon={<EditOutlined />} onClick={showModal}>
         Add new Image
-      </Button>
-      <Modal title="Add New Image" okButtonProps={{ disabled: imageSource === '' ? true : false }} okText="Add" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+      </Button>}
+      <Modal title="Add New Image" okButtonProps={{ disabled: imageSource === '' ? true : false }} okText={props.mode === 'mainList'?"save":"Add"} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <ImageUploadForm photo={imageSource} setImage={handleImageChange} />
       </Modal>
     </>

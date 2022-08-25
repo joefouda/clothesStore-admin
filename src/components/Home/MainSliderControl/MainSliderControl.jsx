@@ -49,14 +49,14 @@ const MainSliderControl = () => {
         toggleWebProgress()
         toggleMobileProgress()
         axios.get('http://localhost:3000/api/v1/other/mainSliderWebPhotos').then((res) => {
-            setWebPhotos(res.data?.mainSlider?.photos || [])
+            setWebPhotos(res.data?.result?.photos || [])
             toggleWebProgress()
         }).catch(error=>{
             handleNotification('error', 'Server Error')
         })
 
         axios.get('http://localhost:3000/api/v1/other/mainSliderMobilePhotos').then((res) => {
-            setMobilePhotos(res.data?.mainSlider?.photos || [])
+            setMobilePhotos(res.data?.result?.photos || [])
             toggleMobileProgress()
         }).catch(error=>{
             handleNotification('error', 'Server Error')

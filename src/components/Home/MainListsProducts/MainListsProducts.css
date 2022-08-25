@@ -1,11 +1,11 @@
-.main-slider-control-container {
+.featured-products-control-container {
     padding: 20px;
     display: flex;
     margin: auto;
     height: 80vh;
 }
 
-.main-slider-control-container-content {
+.featured-products-control-container-content {
     padding: 20px;
     display: flex;
     height: 100%;
@@ -16,7 +16,7 @@
     flex:1;
 }
 
-.main-slider-control-container-photos {
+.featured-products-control-container-products {
     position: relative;
     padding: 20px;
     display: flex;
@@ -32,13 +32,13 @@
     height: -webkit-fill-available;
 }
 
-.main-slider-control-container-photos::-webkit-scrollbar {
+.featured-products-control-container-products::-webkit-scrollbar {
     width: 12px;
     /* width of the entire scrollbar */
 }
 
-.main-slider-control-container-photos::-webkit-scrollbar-thumb {
-    background-color: #545454;
+.featured-products-control-container-products::-webkit-scrollbar-thumb {
+    background-color: #6F42C1;
     /* color of the scroll thumb */
     border-radius: 20px;
     /* roundness of the scroll thumb */
@@ -46,12 +46,12 @@
     /* creates padding around scroll thumb */
 }
 
-.main-slider-control-container-photos::-webkit-scrollbar {
+.featured-products-control-container-products::-webkit-scrollbar {
     width: 12px;
     /* width of the entire scrollbar */
 }
 
-.main-slider-control-container-photos::-webkit-scrollbar-thumb {
+.featured-products-control-container-products::-webkit-scrollbar-thumb {
     background-color: #6F42C1;
     /* color of the scroll thumb */
     border-radius: 20px;

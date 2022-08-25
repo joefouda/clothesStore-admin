@@ -8,7 +8,8 @@ const Home = () => {
     <Collapse>
       <Panel header="Home Page Control" key="1">
         <Link to='/mainSliderControl'>Main slider Control</Link><br />
-        <Link to='/featuredProductsControl'>Featured Products Control</Link>
+        <Link to='/mainLists'>Main Lists Control</Link><br />
+        <Link to='/mainListsProducts'>Main Lists (products) Control</Link>
       </Panel>
     </Collapse>
   );

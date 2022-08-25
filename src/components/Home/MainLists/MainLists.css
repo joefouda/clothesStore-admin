@@ -1,0 +1,48 @@
+.main-lists-control-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    margin: auto;
+    height: 80vh;
+    background-color: white;
+    width: 70vw;
+    -ms-overflow-style: none;
+    /* for Internet Explorer, Edge */
+    scrollbar-width: none;
+    /* for Firefox */
+    overflow-y: scroll;
+}
+
+.main-lists-control-container::-webkit-scrollbar {
+    width: 12px;
+    /* width of the entire scrollbar */
+}
+
+.main-lists-control-container::-webkit-scrollbar-thumb {
+    background-color: #6F42C1;
+    /* color of the scroll thumb */
+    border-radius: 20px;
+    /* roundness of the scroll thumb */
+    border: 3px solid white;
+    /* creates padding around scroll thumb */
+}
+
+.main-lists-control-heading {
+    text-align: center;
+}
+
+.main-list-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.main-list-content {
+    display: flex;
+    gap: 2vw;
+    min-height: 20vh;
+}
+
+.main-list-image {
+width: 15vw;
+}

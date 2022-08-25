@@ -14,7 +14,8 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import StatisticsPage from './pages/StatisticsPage';
 import MainSliderControlPage from './pages/MainSliderControlPage'
-import FeaturesSectionControl from './components/Home/FeaturesSectionControl/FeaturesSectionControl';
+import MainLists from './components/Home/MainLists/MainLists';
+import MainListsProducts from './components/Home/MainListsProducts/MainListsProducts';
 import ProductPhotosControl from './components/Products/ProductPhotosControl/ProductPhotosControl'
 import MayRenderMainNav from './shared/MayRenderMainNav';
 import { LogInGuard, LogOutGuard, Redirect } from './auth/authGuards'
@@ -90,8 +91,11 @@ function App() {
                 <Route exact path='/mainSliderControl' element={<LogInGuard />}>
                   <Route path="/mainSliderControl" element={<PersistentDrawerLeft><MainSliderControlPage /></PersistentDrawerLeft>} />
                 </Route>
-                <Route exact path='/featuredProductsControl' element={<LogInGuard />}>
-                  <Route path="/featuredProductsControl" element={<PersistentDrawerLeft><FeaturesSectionControl /></PersistentDrawerLeft>} />
+                <Route exact path='/mainListsProducts' element={<LogInGuard />}>
+                  <Route path="/mainListsProducts" element={<PersistentDrawerLeft><MainListsProducts /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/mainLists' element={<LogInGuard />}>
+                  <Route path="/mainLists" element={<PersistentDrawerLeft><MainLists /></PersistentDrawerLeft>} />
                 </Route>
                 <Route exact path='/login' element={<LogOutGuard />}>
                   <Route path="/login" element={<LoginPage />} />

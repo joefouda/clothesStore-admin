@@ -1,5 +1,5 @@
 import { Divider } from "antd"
-import "./FeaturesSectionControl.css";
+import "./MainListsProducts.css";
 import { Input, Select, Empty } from "antd";
 import { useState } from "react";
 import axios from "axios";
@@ -39,8 +39,8 @@ const FeaturesSectionControl = ()=>{
         }
     };
     return (
-        <div className="main-slider-control-container">
-            <div className="main-slider-control-container-content">
+        <div className="featured-products-control-container">
+            <div className="featured-products-control-container-content">
                 <Input
                     placeholder="search and add new products to your lists"
                     size="large"
@@ -52,13 +52,13 @@ const FeaturesSectionControl = ()=>{
                     </h2>
                 )}
                 <Divider />
-                <div className="main-slider-control-container-photos">
+                <div className="featured-products-control-container-products">
                     {searchProducts.map((product) => (
-                        <ProductCard product={product} type='search'/>
+                        <ProductCard key={product._id} product={product} type='search'/>
                     ))}
                 </div>
             </div>
-            <div className="main-slider-control-container-content">
+            <div className="featured-products-control-container-content">
                 <h1>Featured Products</h1>
                 <Select placeholder="choose special category" onChange={specialCategoryChange}>
                     <Option value="regular">regular</Option>
@@ -67,7 +67,7 @@ const FeaturesSectionControl = ()=>{
                     <Option value="special-3">special-3</Option>
                 </Select>
                 <Divider />
-                <div className="main-slider-control-container-photos">
+                <div className="featured-products-control-container-products">
                     {products.length === 0?<Empty
                         description={
                             <span>
@@ -76,7 +76,7 @@ const FeaturesSectionControl = ()=>{
                         }
                     >
                     </Empty>:products.map((product) => (
-                        <ProductCard product={product} type='display'/>
+                        <ProductCard key={product._id} product={product} type='display'/>
                     ))}
                 </div>
             </div>
