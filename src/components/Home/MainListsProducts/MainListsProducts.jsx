@@ -13,8 +13,8 @@ const FeaturesSectionControl = ()=>{
     const [products, setProducts] = useState([]);
     const [searchProducts, setSearchProducts] = useState([])
 
-    const specialCategoryChange = (specialCategory) => {
-        axios.get(`http://localhost:3000/api/v1/product/specialCategory/${specialCategory}`, )
+    const mainListChange = (mainList) => {
+        axios.get(`http://localhost:3000/api/v1/product/mainList/${mainList}`, )
             .then((res) => {
                  setProducts(res.data.products);
             });
@@ -60,11 +60,12 @@ const FeaturesSectionControl = ()=>{
             </div>
             <div className="featured-products-control-container-content">
                 <h1>Featured Products</h1>
-                <Select placeholder="choose special category" onChange={specialCategoryChange}>
+                <Select placeholder="choose special category" onChange={mainListChange}>
                     <Option value="regular">regular</Option>
+                    <Option value="main-slider">main-slider</Option>
                     <Option value="special-1">special-1</Option>
                     <Option value="special-2" >special-2</Option>
-                    <Option value="special-3">special-3</Option>
+                    <Option value="featured">featured</Option>
                 </Select>
                 <Divider />
                 <div className="featured-products-control-container-products">

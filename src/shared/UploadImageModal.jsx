@@ -62,12 +62,14 @@ const UploadImageModal = (props) => {
         handleNotification('error', 'Server Error')
       })
     } else {
-      axios.put(props.url, { photo: imageSource, title:props.title }, {
+      axios.put(props.url, { photo: imageSource }, {
         headers: {
           'Authorization': localStorage.getItem('token')
         }
       }).then(res => {
-        props.setMainLists(res.data.result.MainLists)
+        props.setMainLists((oldMainLists)=> oldMainLists.map(mainList=> {
+          return mainList._id === props.id? res.data.mainList:mainList
+        }))
         handleNotification('success', 'photo edited successfully')
       }).catch(error => {
         handleNotification('error', 'Server Error')
@@ -83,7 +85,7 @@ const UploadImageModal = (props) => {
 
   return (
     <>
-      {props.mode === 'mainList' ?<Button className="no-background-button" icon={<EditOutlined />} aria-label="edit" onClick={showModal}></Button>:<Button color="primary" icon={<EditOutlined />} onClick={showModal}>
+      {props.mode === 'mainList' ?<Button className="no-background-button" icon={<EditOutlined />} aria-label="edit" onClick={showModal}>edit image</Button>:<Button color="primary" icon={<EditOutlined />} onClick={showModal}>
         Add new Image
       </Button>}
       <Modal title="Add New Image" okButtonProps={{ disabled: imageSource === '' ? true : false }} okText={props.mode === 'mainList'?"save":"Add"} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>

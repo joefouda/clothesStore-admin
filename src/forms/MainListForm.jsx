@@ -56,41 +56,36 @@ const DialogActions = withStyles((theme) => ({
     },
 }))(MuiDialogActions);
 
-export default function SpecialCategoryForm(props) {
+export default function MainListForm(props) {
     const [open, toggleOpen] = useToggle(false);
-    const [specialCategory, setSpecialCategory] = useState(props.specialCategory)
+    const [mainList, setMainList] = useState(props.mainList)
     const { handleNotification } = useContext(NotificationContext);
 
-    const onChange = (e) => {
-        
-    };
-
     const handleClickOpen = () => {
-        setSpecialCategory(props.specialCategory)
+        setMainList(props.mainList)
         toggleOpen();
     };
     const handleClose = () => {
         toggleOpen();
-        setSpecialCategory('');
+        setMainList('');
     };
 
-    const handleChangespecialCategory = (event, newspecialCategory) => {
-        setSpecialCategory(newspecialCategory);
+    const handleChangeMainList = (event, newMainList) => {
+        setMainList(newMainList);
     };
 
     
-
     const handleSubmit = () => {
-        axios.put(`http://localhost:3000/api/v1/product/specialCategory`, {id:props.id, specialCategory}, {
+        axios.put(`http://localhost:3000/api/v1/product/mainList`, {id:props.id, mainList}, {
             headers: {
                 'authorization': localStorage.getItem('token')
             }
         })
             .then((res) => {
-                setSpecialCategory(res.data.product.specialCategory);
+                setMainList(res.data.product.mainList);
                 toggleOpen();
-                setSpecialCategory('');
-                handleNotification('success', `product added to ${specialCategory} list successfully`)
+                setMainList('');
+                handleNotification('success', `product added to ${mainList} list successfully`)
             });
     }
 
@@ -99,16 +94,19 @@ export default function SpecialCategoryForm(props) {
             <Button aria-label="close" startIcon={<EditIcon />} onClick={handleClickOpen}>change special category</Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Change specialCategory
+                    Change mainList
                 </DialogTitle>
                 <DialogContent dividers>
                     <ToggleButtonGroup
-                        value={specialCategory}
+                        value={mainList}
                         exclusive
-                        onChange={handleChangespecialCategory}
+                        onChange={handleChangeMainList}
                     >
                         <ToggleButton value="regular">
                             regular
+                        </ToggleButton>
+                        <ToggleButton value="main-slider">
+                            main-slider
                         </ToggleButton>
                         <ToggleButton value="special-1">
                             special-1
@@ -116,8 +114,8 @@ export default function SpecialCategoryForm(props) {
                         <ToggleButton value="special-2">
                             special-2
                         </ToggleButton>
-                        <ToggleButton value="special-3">
-                            special-3
+                        <ToggleButton value="featured">
+                            featured
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </DialogContent>
