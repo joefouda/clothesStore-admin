@@ -13,7 +13,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import axios from 'axios'
-import Chip from '@material-ui/core/Chip';
 import useToggle from '../customHooks/useToggle';
 
 const styles = (theme) => ({
@@ -104,6 +103,9 @@ export default function MainListForm(props) {
                     >
                         <ToggleButton value="regular">
                             regular
+                        </ToggleButton>
+                        <ToggleButton value="nav-link">
+                            nav-link
                         </ToggleButton>
                         <ToggleButton value="main-slider">
                             main-slider
