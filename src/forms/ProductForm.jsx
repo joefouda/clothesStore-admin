@@ -12,21 +12,6 @@ const { Option } = Select
 export default function ProductForm(props) {
     const [modalVisable, toggleModal] = useToggle(false)
     const { handleNotification } = useContext(NotificationContext);
-    const [imageSource, setImageSource] = useState(props.data?.photo)
-    const [variantOption, setVariantOption] = useState([])
-    const [variants, setVariants] = useState(props.model?.variants || {})
-    const [finalVariants, setFinalVariants] = useState({})
-
-    const handleImageChange = (childData) => {
-        setImageSource(childData);
-    };
-
-    const handleOptionChange = (value, key, index) => {
-        const newOptions = [...variantOption]
-        newOptions[index] = value
-        setVariantOption(() => [...newOptions])
-        setFinalVariants((oldvariants) => ({...oldvariants, [key]:value }))
-    }
 
     const handleOk = () => {
         productForm.submit()
@@ -39,7 +24,7 @@ export default function ProductForm(props) {
     const onFinish = (values) => {
         props.toggleProgress()
         if (props.mode === 'Add') {
-            let addData = { ...values,photo: imageSource, category: props.model.category, subCategory: props.model.subCategory, variants: finalVariants, model: props.model._id }
+            let addData = { ...values, category: props.subCategory.category, subCategory: props.subCategory._id }
             axios.post('http://localhost:3000/api/v1/product/add', addData, {
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -71,14 +56,10 @@ export default function ProductForm(props) {
         productForm.resetFields()
         productForm.setFieldsValue({
             name: props.data?.name || '',
-            stock: props.data?.stock ? String(props.data.stock) : '',
             price: props.data?.price ? String(props.data.price) : '',
             discountPercentage: props.data?.discountPercentage ? String(props.data.discountPercentage) : '',
             description: props.data?.description || '',
         })
-        setImageSource(props.data?.photo || '')
-        setVariants(props.model?.variants || [])
-        setVariantOption([])
     }, [modalVisable])
     const [productForm] = Form.useForm();
 
@@ -104,7 +85,6 @@ export default function ProductForm(props) {
                     autoComplete="off"
                 >
                     <div className="fields-container">
-                        {props.mode === "Add" &&<ImageUploadForm photo={imageSource} setImage={handleImageChange} />}
                         <Form.Item
                             name="name"
                             rules={[
@@ -114,23 +94,6 @@ export default function ProductForm(props) {
                             ]}
                         >
                             <Input placeholder="Name" allowClear />
-                        </Form.Item>
-                        <Form.Item
-                            name="stock"
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                                {
-                                    pattern: /^[0-9]+$/,
-                                    message: 'Must be only numbers'
-                                },
-                                {
-                                    min: 1,
-                                }
-                            ]}
-                        >
-                            <Input className="defualt-input" placeholder="Stock" />
                         </Form.Item>
                         <Form.Item
                             name="price"
@@ -176,15 +139,6 @@ export default function ProductForm(props) {
                         >
                             <Input.TextArea placeholder="Description" allowClear />
                         </Form.Item>
-                        {props.mode === 'Add' ? Object.keys(variants).map((variantkey, index) => (<Form.Item key={index} name={variantkey.slice(0, -1)} rules={[{ required: true }]} size="small">
-                            <Select
-                                value={variantOption[index] || ''}
-                                placeholder={variantkey.slice(0, -1)}
-                                onChange={(value) => handleOptionChange(value, variantkey.slice(0, -1), index)}
-                            >
-                                {props.model.variants[variantkey].map((option, index) => (<Option style={{ backgroundColor: variantkey === 'colors' && option, textShadow: '1px 0 7px grey' }} key={index} value={option}>{option}</Option>))}
-                            </Select>
-                        </Form.Item>)) : ''}
                     </div>
                 </Form>
             </Modal>

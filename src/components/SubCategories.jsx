@@ -16,7 +16,7 @@ const SubCategories = () => {
         let newEle = {
           ...newSubCategory,
           actions: <SubCategoryForm data={newSubCategory} categoryId={newSubCategory.category} mode={'Edit'} toggleProgress={toggleProgress} editElement={editElement}/>,
-          moreDetails: <Link to={`/${newSubCategory.category}/${newSubCategory._id}/models`}><Button className='no-background-button' icon={<EyeOutlined style={{ fontSize: '1em' }}/>}>view models</Button></Link>,
+          moreDetails: <Link to={`/${newSubCategory._id}/products`}><Button className='no-background-button' icon={<EyeOutlined style={{ fontSize: '1em' }}/>}>View Products</Button></Link>,
         }
         setSubCategories(oldSubCategories=> [...oldSubCategories, newEle])
       }
@@ -25,7 +25,7 @@ const SubCategories = () => {
         let editedEle = {
           ...editedSubCategory,
           actions: <SubCategoryForm data={editedSubCategory} categoryId={editedSubCategory.category} mode={'Edit'} toggleProgress={toggleProgress} editElement={editElement}/>,
-          moreDetails: <Link to={`/${editedSubCategory.category}/${editedSubCategory._id}/models`}><Button className='no-background-button' icon={<EyeOutlined style={{ fontSize: '1em' }}/>}>view models</Button></Link>,
+          moreDetails: <Link to={`/${editedSubCategory._id}/products`}><Button className='no-background-button' icon={<EyeOutlined style={{ fontSize: '1em' }}/>}>View Products</Button></Link>,
         }
         setSubCategories(oldSubCategories=> oldSubCategories.map(subCategory=>{
             return subCategory._id === editedSubCategory._id ? editedEle : subCategory
@@ -37,7 +37,7 @@ const SubCategories = () => {
           return {
             ...ele,
             actions: <SubCategoryForm data={ele} mode={'Edit'} toggleProgress={toggleProgress} editElement={editElement}/>,
-            moreDetails: <Link to={`/${ele.category}/${ele._id}/models`}><Button className='no-background-button' icon={<EyeOutlined style={{ fontSize: '1em' }}/>}>view models</Button></Link>,
+            moreDetails: <Link to={`/${ele._id}/products`}><Button className='no-background-button' icon={<EyeOutlined style={{ fontSize: '1em' }}/>}>View Products</Button></Link>,
           }
         })
         setSubCategories(data)

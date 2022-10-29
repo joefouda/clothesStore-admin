@@ -6,9 +6,9 @@ import MainNavigation from './shared/MainNavigation'
 import HomePage from './pages/HomePage';
 import UsersPage from './pages/UsersPage'
 import ProductsPage from './pages/ProductsPage'
+import ColorsPage from './pages/ColorsPage';
 import CategoriesPage from './pages/CategoriesPage'
 import SubCategoriesPage from './pages/SubCategoriesPage'
-import ModelsPage from './pages/ModelsPage'
 import OrdersPage from './pages/OrdersPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
@@ -67,20 +67,20 @@ function App() {
                 <Route exact path='/users' element={<LogInGuard />}>
                   <Route path="/users" element={<PersistentDrawerLeft><UsersPage /></PersistentDrawerLeft>} />
                 </Route>
-                <Route exact path='/:modelID/products' element={<LogInGuard />}>
-                  <Route path="/:modelID/products" element={<PersistentDrawerLeft><ProductsPage /></PersistentDrawerLeft>} />
+                <Route exact path='/:productID/colors' element={<LogInGuard />}>
+                  <Route path="/:productID/colors" element={<PersistentDrawerLeft><ColorsPage /></PersistentDrawerLeft>} />
                 </Route>
-                <Route exact path='/:id/productPhotos' element={<LogInGuard />}>
-                  <Route path="/:id/productPhotos" element={<PersistentDrawerLeft><ProductPhotosControl /></PersistentDrawerLeft>} />
+                <Route exact path='/:subCategoryID/products' element={<LogInGuard />}>
+                  <Route path="/:subCategoryID/products" element={<PersistentDrawerLeft><ProductsPage /></PersistentDrawerLeft>} />
+                </Route>
+                <Route exact path='/:id/colorPhotos' element={<LogInGuard />}>
+                  <Route path="/:id/colorPhotos" element={<PersistentDrawerLeft><ProductPhotosControl /></PersistentDrawerLeft>} />
                 </Route>
                 <Route exact path='/categories' element={<LogInGuard />}>
                   <Route path="/categories" element={<PersistentDrawerLeft><CategoriesPage /></PersistentDrawerLeft>} />
                 </Route>
                 <Route exact path='/:categoryID/subCategories' element={<LogInGuard />}>
                   <Route path="/:categoryID/subCategories" element={<PersistentDrawerLeft><SubCategoriesPage /></PersistentDrawerLeft>} />
-                </Route>
-                <Route exact path='/:categoryID/:subCategoryID/models' element={<LogInGuard />}>
-                  <Route path="/:categoryID/:subCategoryID/models" element={<PersistentDrawerLeft><ModelsPage /></PersistentDrawerLeft>} />
                 </Route>
                 <Route exact path='/orders' element={<LogInGuard />}>
                   <Route path="/orders" element={<PersistentDrawerLeft><OrdersPage /></PersistentDrawerLeft>} />

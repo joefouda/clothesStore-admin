@@ -18,7 +18,7 @@ const ProductPhotosControl = ()=> {
 
     const handleRemove = (photoId)=>{
         toggleProgress()
-        axios.put(`http://localhost:3000/api/v1/product/remove/${id}`,{id:photoId}, {
+        axios.put(`http://localhost:3000/api/v1/product/color/remove/${id}`,{id:photoId}, {
             headers: {
                 'Authorization': localStorage.getItem('token')
             }
@@ -33,8 +33,8 @@ const ProductPhotosControl = ()=> {
 
     useEffect(()=> {
         toggleProgress()
-        axios.get(`http://localhost:3000/api/v1/product/${id}`).then(res=>{
-            setPhotos(res.data.product.photos)
+        axios.get(`http://localhost:3000/api/v1/product/color/${id}`).then(res=>{
+            setPhotos(res.data.color.photos)
             toggleProgress()
         }).catch(error=> {
             handleNotification('error', 'Server Error')
