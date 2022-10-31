@@ -22,14 +22,14 @@ const UploadImageModal = (props) => {
   const handleOk = () => {
 
     setIsModalVisible(false);
-    if (props.mode === 'product') {
+    if (props.mode === 'color') {
       props.toggleProgress()
-      axios.put(`http://localhost:3000/api/v1/product/add/${props.productId}`, { photo: imageSource }, {
+      axios.put(`http://localhost:3000/api/v1/product/color/add/${props.colorId}`, { photo: imageSource }, {
         headers: {
           'Authorization': localStorage.getItem('token')
         }
       }).then(res => {
-        props.setPhotos(res.data.product.photos)
+        props.setPhotos(res.data.color.photos)
         handleNotification('success', 'photo added successfully')
         props.toggleProgress()
       }).catch(error => {

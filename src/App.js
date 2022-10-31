@@ -73,8 +73,8 @@ function App() {
                 <Route exact path='/:subCategoryID/products' element={<LogInGuard />}>
                   <Route path="/:subCategoryID/products" element={<PersistentDrawerLeft><ProductsPage /></PersistentDrawerLeft>} />
                 </Route>
-                <Route exact path='/:id/colorPhotos' element={<LogInGuard />}>
-                  <Route path="/:id/colorPhotos" element={<PersistentDrawerLeft><ProductPhotosControl /></PersistentDrawerLeft>} />
+                <Route exact path='/:colorId/colorPhotos' element={<LogInGuard />}>
+                  <Route path="/:colorId/colorPhotos" element={<PersistentDrawerLeft><ProductPhotosControl /></PersistentDrawerLeft>} />
                 </Route>
                 <Route exact path='/categories' element={<LogInGuard />}>
                   <Route path="/categories" element={<PersistentDrawerLeft><CategoriesPage /></PersistentDrawerLeft>} />

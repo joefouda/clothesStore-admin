@@ -22,7 +22,7 @@ export default function ImageSwiper(props) {
         modules={[EffectFlip, Navigation]}
         className="mySwiper"
       >
-        {props.photos.map(photo=>(<SwiperSlide key={photo.id}>
+        {props.photos.map(photo=>(<SwiperSlide key={photo._id}>
           <Image preview={{ getContainer: '#root',zIndex:1000000 }} src={photo.src} />
         </SwiperSlide>))}
       </Swiper>

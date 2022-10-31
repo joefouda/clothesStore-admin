@@ -4,8 +4,41 @@ import { useNavigate, useParams } from 'react-router-dom'
 import ColorForm from '../forms/ColorForm'
 import axios from 'axios'
 import Button from '@material-ui/core/Button';
+import { EyeOutlined } from '@ant-design/icons'
 import useToggle from '../customHooks/useToggle'
+import { Modal, Table } from 'antd'
 import { NotificationContext } from '../App'
+
+const {Column} = Table
+
+const SizesModal = (props) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+    return (
+        <>
+            <Button startIcon={<EyeOutlined />} className="no-background-button" onClick={showModal}>
+                View List of Sizes
+            </Button>
+            <Modal title="List of Sizes" visible={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                <Table dataSource={props.sizes.map(size=>({...size,key:size._id}))}>
+                    <Column title="Size" dataIndex="size" key="size" />
+                    <Column title="Stock" dataIndex="stock" key="stock" />
+                </Table>
+            </Modal>
+        </>
+    )
+}
 
 const Colors = () => {
     const { handleNotification } = useContext(NotificationContext)
@@ -17,6 +50,8 @@ const Colors = () => {
     const editElement = (editedColor) => {
         let newEle = {
             ...editedColor,
+            color: <div style={{ width: '5vh', height: '5vh', borderRadius: '50%', backgroundColor: editedColor.color, boxShadow: '1px 0px 2px 5px grey' }}></div>,
+            sizes: <SizesModal sizes={editedColor.sizes} />,
             actions: <div style={{ display: 'flex' }}><Button
                 onClick={() => navigate(`/${editedColor._id}/colorPhotos`)}
                 color="primary"
@@ -31,6 +66,8 @@ const Colors = () => {
     const addElement = (newColor) => {
         let newEle = {
             ...newColor,
+            color: <div style={{ width: '5vh', height: '5vh', borderRadius: '50%', backgroundColor: newColor.color }}></div>,
+            sizes: <SizesModal sizes={newColor.sizes} />,
             actions: <div style={{ display: 'flex' }}><Button
                 onClick={() => navigate(`/${newColor._id}/colorPhotos`)}
                 color="primary"
@@ -44,6 +81,8 @@ const Colors = () => {
         let newData = data.map(ele => {
             return {
                 ...ele,
+                color: <div style={{ width: '5vh', height: '5vh', borderRadius: '50%', backgroundColor: ele.color }}></div>,
+                sizes: <SizesModal sizes={ele.sizes} />,
                 actions: <div style={{ display: 'flex' }}><Button
                     onClick={() => navigate(`/${ele._id}/colorPhotos`)}
                     color="primary"
@@ -57,7 +96,7 @@ const Colors = () => {
     const info = {
         header: 'Colors',
         dataFor: 'Color',
-        tableHeaders: ['Photos', 'Color', 'List of Sizes', 'Actions']
+        tableHeaders: ['Photos', 'Color', 'Sizes', 'Actions']
     }
 
     useEffect(() => {
@@ -67,6 +106,7 @@ const Colors = () => {
                 'Authorization': localStorage.getItem('token')
             }
         }).then((res) => {
+            console.log(res.data.colors)
             setData(res.data.colors)
             toggleProgress()
         }).catch((error) => {
