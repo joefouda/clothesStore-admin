@@ -23,8 +23,10 @@ export default function ColorForm(props) {
     const { handleNotification } = useContext(NotificationContext);
 
     const handleOpen = ()=> {
+        console.log(props.data.color)
         setColor(props.data?.color || '#000000')
-        colorRef.current.value = props.data?.color || '#000000'
+        colorRef.current = props.data?.color || '#000000'
+         console.log(colorRef.current)
         setSizes(props.data?.sizes || [])
         toggleModal()
     }
@@ -123,7 +125,7 @@ export default function ColorForm(props) {
             </Button> : <Button className="no-background-button" icon={<EditOutlined />} aria-label="edit" onClick={handleOpen}></Button>}
             <Modal title={props.mode === 'Add' ? "Add new Color" : "Edit Color details"} visible={modalVisable} onOk={handleOk} okText={props.mode === 'Add' ? 'Add' : 'Save Changes'} onCancel={handleCancel}>
                 <div style={{display:'flex', flexDirection:'column'}}>
-                    <input ref={colorRef} type="color" style={{width:'100%', height:'5vh'}} onChange={handleColorChange}/>
+                    <input ref={colorRef} type="color" style={{width:'100%', height:'5vh'}} value={colorRef.current} onChange={handleColorChange}/>
                     {sizes.length ? <TableContainer component={Paper}>
                         <Table aria-label="caption table">
                             <TableHead>
